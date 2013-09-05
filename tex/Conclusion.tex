@@ -1,0 +1,158 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\chapter{Conclusions and Future Work}
+
+  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+  \section{Conclusions}
+  %%% {{{
+    This research is motivated by the need for a versatile multi-robot
+      system middleware that provides the reduced expenditure overhead,
+      robustness to failures, ease of use, generality, and flexible
+      extendability.
+    The research mainly focused on the design and implementation of a
+      general, versatile and highly flexible multi-robot control
+      middleware, encompassing a robot control system and deployment 
+      system.
+    The major contributions of this dissertation are as follows:
+    \begin{itemize}
+      \item \textbf{Developed a versatile, highly flexible and generalized
+        middleware system - Mobile-R.} 
+        Mobile-R is a highly extensible and reconfigurable middleware system
+          that follows the multi-agent standards of the Foundation for 
+          Intelligent Physical Agents (FIPA).
+        It allows for the implementation of architectures popularly used in the 
+          different multi-robot paradigms.
+        Mobile-R is based on widely accepted standards for multi-agent 
+          interaction allowing for interoperability with other multi-agent systems.
+        Using mobile agents provides innate fault-tolerance by using the mobile
+          agents' ability to migrate to different hosts.
+        Mobile-R contains all of the salient features of an ideal robot 
+          middleware.
+        The system is based on the standard C/C++ programming language and 
+          provides a simple interface for extending functionality to reduce 
+          the computational and programing efforts and it is easy to use.
+%        Mobile-R is highly reconfigurable allowing the implementation of
+%          almost all existing multi-robot architectures with ease.
+        Since Mobile-R is based on C/C++, the system can easily be 
+          extended and existing C/C++ based software can quickly be integrated
+          into the system.
+        Mobile agents provide a mechanism for rapid reprogrammability of a
+          system and migration capabilities between virtual robots in a 
+          simulated environment and and real-world physical systems.
+        
+      \item \textbf{Explored the efficiency of a mobile agent-based multi robot 
+                    middleware.}
+         Using Mobile-C as the mobile agency with C/C++ mobile agents has many 
+           distinctive advantages.
+         In general, robot manufacturers provide system libraries to control
+           their robots in C/C++.
+         Using a system that shares the same programming language provides easy
+           integration of the software with the low-level drivers.
+         The user can use C to easily interface with low-level hardware while using
+           C++ to create a object oriented high-level interface.
+
+      \item \textbf{Extended the IEEE FIPA standards to support physical services.}
+        FIPA specifications mainly allow for inter-agent software shared 
+          services.
+        However, when dealing with physical robot systems, it may be possible
+          for a robot system to share physical services such as having an
+          installed manipulator.
+        The service specifications and sharing protocol for physical 
+          capabilities have been developed on top of the preliminary FIPA 
+          service discovery agent specifications.
+
+      \item \textbf{Extended the capabilities of the Mobile-C mobile agent system.}
+        The Mobile-C mobile agent system was extended to include a service
+          discovery agent that provides remote service discovery
+          across the domain.
+        The mobile agent system was also enhanced with a FIPA communication
+          modules that off loads all of the communication processing from
+          the agent to the agency.
+        It also significantly reduces the amount of agent code written by a 
+          user in order to use the FIPA ACL communication language.
+
+      \item \textbf{Developed an accompanying extendible deployment system.}
+        A deployment system was designed and partially developed to provide 
+          rapid deployment of mission-based multi-robot systems.
+        The deployment system allows for custom defined architectural 
+          components and reconfiguration or installation of the necessary
+          mobile agent on individual robots.
+
+      \item \textbf{Provided a mobile agent-based multi-robot architecture
+                    for planetary reconnaissance and structure deployment.}
+        A cooperative mission-based tier-scalable planetary reconnaissance
+          and structure deployment system has been designed and partially
+          implemented using Mobile-R.
+        The use of Mobile-R allows for automatic task delegation and
+          decomposition with collaborative capabilities.
+
+
+
+    \end{itemize}
+  %%% }}}
+  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+  \section{Future Work}
+  %%% {{{
+
+    As previously described, this research has completed with the design of a 
+      general, versatile and flexible multi-robot control platform, Mobile-R,
+      including a robot control system and a deployment system.
+    The main components of the system have been implemented, validated in both 
+      physical and virtual robot systems, and simulated in a planetary
+      reconnaissance system.
+    However, multi-robot systems encompass a wide variety of research and 
+      several issues still remain to be studied.
+
+    The Mobile-R deployment system still needs to be expanded to include
+      quick addition of user definable system components.
+    Currently, Mobile-R takes in the user input concerning group assignment
+      and choosing a specific architectural implementation for specific missions.
+    However, it would be more beneficial to users to have the automatically 
+      decide which architectural implementation would be more appropriate and 
+      which robots should be grouped together.
+    The system should also be expanded to include the control of other widely 
+      used robots.
+
+    Mobile-R provides the necessary foundation for adding a mission 
+      learning mechanism in which robots returning from a mission or a task can
+      provide feedback to the deployment system.
+    The deployment system can learn individual robot characteristics along with
+      groups arrangements and integrate in-field learned behaviors.
+
+    Although Mobile-R provides some advanced functionality including 
+      the integration of a genetic algorithms, vision, and an artificial neural 
+      network library, more advanced features should be included such as
+      simultaneous localization and mapping with distributed algorithms,
+      multiple filter implementations and other useful multi-robot 
+      functionality.
+
+    The system validation and testing in Chapter \ref{sec:validation} 
+      demonstrates the vast capabilities of Mobile-R.
+    The next stage would be a comprehensive performance comparison with other
+      middleware, and between distributed and centralized control scheme.
+    For example, it would be interesting to figure out at what point, 
+      how many robots, would it be best to utilize a distributed control 
+      scheme instead of a centralized one.
+
+    Currently, the deployment system robot-to-task selection criteria is only
+      based on whether or not the robot can fulfill the task. 
+    However, full optimization of robot selection should include the dynamic
+      characteristics of the robot as well.
+    Therefore, although any fast multi-wheeled robot is capable of traversing 
+      over bumpy terrain and rapidly pursuing an evader, those with nominal
+      suspension system would be better.
+    Task execution time should also be taken into consideration.
+    The robot-to-task selection criteria should be improved to include 
+      individual robot dynamics and a task execution time estimator.
+
+    The developed deployment system provides based functionality through a
+      prompt based interface.
+    User are more receptive to GUI-based systems as compared to prompt-based
+      applications.
+    Therefore, the menu-driven deployment system should be re-implemented
+      with a fully functional GUI user interface.
+  %%% }}}
+  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+ 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

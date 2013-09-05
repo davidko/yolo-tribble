@@ -1,0 +1,872 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% begin Architecture
+\chapter{Mobile-R: Mobile Agent-Based Reconfigurable Robot Control System}
+  
+  A general mobile agent-based network robot system, Mobile-R, has been
+    developed during the course of this research project.
+  The objectives of the Mobile-R system are two folds.
+  First, the system aims to provide a multi-dimensional, highly configurable 
+    mobile agent-based robot control system for cooperative multi-robot systems
+    as shown in Figure \ref{fig:systemarch}.
+  The key technologies include sub-component reconfigurability and 
+    autonomic features including system fault-tolerance.
+  Secondly, the system also aims to facilitate the rapid deployment of a 
+    multitude of robot network configurations with off-line and on-line dynamic 
+    task allocation.
+  %%%-----------------------FIGURE-----------------------%%%%%%%%%%%%%%%%%%%%%
+  \begin{figure}%[!ht]
+    \centerline{\includegraphics[width=6.5in]{figures/SystemArch}}
+    \caption{The Mobile-R system architecture.}
+    \label{fig:systemarch}
+  \end{figure}
+  %%%-----------------------FIGURE-----------------------%%%%%%%%%%%%%%%%%%%%%
+    
+  The Mobile-R system, shown in Figure \ref{fig:systemarch} encompasses 
+    multiple robot teams with multiple robots and a deployment system.
+  The robots can be physical or virtual and run one of multiple variations
+    of the Mobile-R robot control system.
+  The robot control system includes a robot control agency which could
+    contain different types of mobile agents, and multiple high-level packages 
+    used for high-level planning, control or collaboration.
+  The high-level packages may include but is not limited to artificial neural 
+    networks, genetic algorithms, and computer vision.
+  The following sections describe the main components of the Mobile-R
+    platform.
+  Section \ref{sec:rcs} describes the components of the robot
+    control system including the robot control mobile agency, simply referred
+    to as the robot control agency from this point on, and all of the agents 
+    therein and the high-level packages.
+  Section \ref{sec:ds} describes the deployment system.
+
+  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+  \section{Robot Control System} \label{sec:rcs}
+  %%% {{{ 
+    In order to provide as much compatibility and configurability, a 
+      Mobile-R robot contol system can be created from a variety of component 
+      configurations.
+    This provides a wide range of implementable robot architectures from 
+      purely reactive to purely deliberative systems.
+
+   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+  \subsection{Robot Control Agency Components}
+  %%% {{{
+    The robot control agency used in Mobile-R should comply with 
+      an agent standard that is actively updated and widely used.
+    Therefore, Mobile-R utilizes Mobile-C, an IEEE FIPA stand compliant
+      mobile agent system, as its robot control mobile agency.
+    Using Mobile-C guarantees interoperability with other FIPA compliant agent 
+      systems that are used as either higher level agencies or enterprise systems.
+
+    The robot control system framework utilizes a multi-agent system design
+      as shown in Figure \ref{fig:robo_framework}.
+    %%%%%%%%%%%%%%%%%%%%%%%%% FIGURE %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    \begin{figure}%[!ht]
+      \centerline{\includegraphics[width=5.0in]{figures/Arch}}
+      \caption{The Mobile-R robot control system framework.}
+      \label{fig:robo_framework}
+    \end{figure}
+    %%%%%%%%%%%%%%%%%%%%%%%%% FIGURE %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    The robot control system framework is comprised of seven different types of 
+      mobile agents: a deliberative, a reactive, a hardware, a service discovery
+      agent, and possibly multiple task, behavior and device agents.
+    Using mobile agents provides flexibility in rapid on-line system 
+      reconfigurability.
+    The following sections describe the capabilities and operating directives of 
+      each of these agents and their communication protocols.
+
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    \subsubsection{Deliberative Agent}
+    %%% {{{
+      The Deliberative Agent acts as the deliberator or executive layer of the 
+        robotic system and encompasses multiple sub-modules including but not 
+        limited to the arbiter, self model, world model, knowledge base, 
+        planner, emotion and executive.
+      However, the number of implemented deliberative modules is application 
+        dependent.
+
+      The \textbf{arbiter} module arbitrates the behavioral components of the
+        Reactive Agent and is directly controlled by the planner module.
+      This allows the Deliberative Agent to control unforeseen emergent 
+        behaviors, inhibit or excite specific behavioral components if necessary.
+      The arbiter module communicates with the Reactive Agent using ACL message 
+        with a specific arbitration protocol.
+
+      The \textbf{self model} module keeps track of all of the current and 
+        previous internal states of the robot.
+      Storage of the previous internal states is accomplished with the 
+        internal knowledge base.
+        
+      The \textbf{world model} module keeps track of all of the current and 
+        previous external environmental states including mapping, coordinate
+        location, location of other robots and objects, goal position, 
+        and terrain data.
+      Storage of world model information is accomplished with the internal 
+        knowledge base.
+
+      The \textbf{knowledge base} module keeps track of previous internal 
+        robot and external environmental states, arbitration and planner 
+        commands, emotional states, and any other information necessary
+        for the proper execution of the executive module.
+
+      The \textbf{planner} module works in conjunction with the executive 
+        module and uses information from the world model to determine the 
+        next appropriate actions.
+      Internally, the planner decomposes higher level planning information from
+        the executive module into the appropriate sequence of actions including 
+        either direct control of the robot by interacting with the Hardware Agent 
+        or controlling the Reactive Agent through the arbitration module.
+
+      The \textbf{emotion} module utilizes information from the self model
+        module to determine the current emotional state of the robot.
+%FIXME       Emotional states can include aggrevation, --- refernce 
+
+      The \textbf{executive} module setups an internal belief-desire-intention 
+        (BDI) system and gathers current and previous information concerning
+        all of the other modules.
+      The executive module works with the planner in order to determine an
+        appropriate sequence of actions to take next.
+      The emotion module and BDI system keep the executive and planner modules
+        from spending too much time on planning future actions.
+%FIXME      BDI reference
+      Depending on the current state of the system and the environment, the
+        executive module may be rushed to make a decision due to a sense of
+        impatience.
+    %%% }}}
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    \subsubsection{Reactive Agent}
+    %%% {{{
+     The Reactive Agent acts as the low-level reactive controller of the robotic 
+       system and encompasses multiple sub-modules including motivations, 
+       composite behaviors and a behavior repertoire.
+     The reactive system follows traditional subsumption architectures where higher 
+       hierarchical behavioral levels may inhibit or suppress the output of lower 
+       levels as shown in Figure \ref{fig:behavioralcomponents}.
+     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% FIGURE %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+     \begin{figure}%[!ht]
+       \centerline{\includegraphics[width=5.0in]{figures/behaviors}}
+       \caption{The behavioral components in one possible connection setup.}
+       \label{fig:behavioralcomponents}
+     \end{figure}
+     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% FIGURE %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+     The Reactive Agent will continuously update the actuator driver control 
+       signals at a constant frequency.
+     During each cycle, the Reactive Agent gathers new sensor data, executes 
+       each of the behavioral components, sums up their outputs, and updates 
+       the actuator driver control signals as shown in Figure 
+       \ref{fig:behaviorsum}.
+     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% FIGURE %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+     \begin{figure}%[!ht]
+       \centerline{\includegraphics[width=4.0in]{figures/BehaviorSum}}
+       \caption{The behavioral component summation and output.}
+       \label{fig:behaviorsum}
+     \end{figure}
+     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% FIGURE %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+     Each behavior component receives the same sensor data and generates the 
+       required number of actuator outputs.
+
+     Higher level control through Reactive Agent and Deliberative Agent 
+       collaboration allows for deliberate arbitration of the behavioral 
+       components to control non-desirable emergent behaviors.
+     When dealing with unstructured environments, it is impossible to foresee, 
+       implement, and store all possible behavioral components on a robot.
+     New behavioral components can be obtained by having the robot instantiate a 
+       new behavior agent which then migrates to the knowledge base or other 
+       robots to obtain new behavioral components based on the desired criteria 
+       set forth by the robot.
+     Desired criteria come from the task agent list of minimum required behavior 
+       functionality for the success of a task.
+     Different behaviors can be tested and autonomously ranked in terms of 
+       usability for a given task which is can then be stored internally, shared 
+       with other robots and/or the knowledge base for future reference.
+    %%% }}}
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    \subsubsection{Hardware Agent}
+    %%% {{{
+      The Hardware Agent is the hardware abstraction layer of the robotic 
+        system and includes, but is not limited to, the \textit{sensor and 
+       actuator hardware abstraction}, \textit{communication hardware and 
+        protocols}, \textit{informatic algorithms}, \textit{logger}, and
+        a \textit{human-machine interface (HMI)} modules.
+
+      The \textbf{sensor and actuator abstraction module (SAAM)} provides a 
+       mechanism that hides the heterogeneity between different virtual and
+        physical robot hardware.
+      This mechanism allows the Mobile-R robot control system to migrate from
+        virtual robots executing in a simulation environment to real-world
+        physical robots operating in the field.
+      Sensor data acquisition and actuator signal control is accomplished
+        using the Mobile-R hardware abstraction layer (HAL) discussed
+        in Section \ref{sec:hal}.
+       
+      The \textbf{informatic algorithm module (IAM)} allows for the injection 
+        of user defined filters and algorithms for sensor and actuator
+        signal processing.
+
+      The \textbf{communication hardware and protocols module (CHPM)} provides 
+        communication access to all available communication mechanisms and the 
+        necessary protocols to communicate with other devices.
+      Low-level communications are accomplished using the Mobile-R hardware 
+        abstraction layer (HAL) discussed in Section \ref{sec:hal}.
+
+      The \textbf{human-machine interface module (HMIM)} allows for the use of
+        application specific interfaces to be installed, removed, or replaced
+        during a mission involving human-robot interaction.
+
+      The \textbf{logger module (LM)} provides a mechanism for general-purpose 
+        data logging and debugging.
+      The logged data can either be saved directly on the robot or transmitted
+        to a logging host.
+    %%% }}}
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    \subsubsection{Task Agent}
+    %%% {{{
+      Task agents provide a mechanism for task allocation, reallocation and 
+        sharing.
+      The task agent contains the necessary algorithms, data, and utility
+        functions to successfully accomplish the task.
+      If a robot wants to change a task or is instructed to change a task, 
+        dynamic task allocation is performed by having a new task agent migrate 
+        to the robot or a task agent migrate to a task knowledge base to 
+        retrieve new task information.
+      Task agents can also be shared or switched between collaborating robots.
+      Although multiple mobile task agents can exist on the same robot, only 
+        one task can be executed at a given time.
+      Execution priority is dictated through the use of the task utility 
+        function provided by the task and an internal Deliberative Agent utility
+        mechanism.
+      Task agents may provide the Deliberative Agent task data as high-level 
+        commands that are then broken down into action sequences by the internal 
+        executive and planner modules or provide services that will produce the 
+        desired outputs.
+      Other task agent service may include the necessary communication protocols
+        to obtains sensor data from external sources, collaboration information
+        and protocols, etc.
+    %%% }}}
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    \subsubsection{Behavior Agent}
+    %%% {{{
+      Behavior agents act very similarly to task agents except they strictly 
+        deal with the reactive layer.
+      Behavior agents are spawned by the robot in order to acquire new 
+        behavioral components from other robots or knowledge bases.
+      Another host may send a behavior agent to the robot to either remove,
+        install, or replace a behavioral component.
+      Behavior cloning and migration comes in handy when a distressed robot 
+        requires a behavior.
+      In some scenarios, it is more efficient to have localized robots with the 
+        required behavior clone and migrate the behavior to the distressed 
+        robot.
+    %%% }}}
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    \subsubsection{Device Agent}
+    %%% {{{
+      The device agent allows for the reconfigurability of the Hardware Agent
+        modules by either installing, removing, or replacing modules.
+      In some situations, it may be desirable apply a filter to specific sensor
+        inputs, modify the HMI, or add additional protocols for communication.
+      Device Agents can be instantiated by the robot in order to acquire new
+        capabilities equivalent to automatically acquiring necessary plug-ins.
+      Device Agents may also be sent from an outside host.
+    %%% }}}
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    \subsubsection{Service Discovery Agent}
+    %%% {{{
+      Currently, FIPA is preliminary stages of constructing an agent discovery 
+        service specification for multi-agent systems \cite{FIPA-ADS}.
+      However, the FIPA discovery service specifications does not employ a
+        mechanism for physical services that may be available with physical
+        robot systems.
+      Therefore, a similarly discovery service mechanism, following the 
+        guidelines provided by the FIPA specifications, will be implemented
+        using service discovery agents (SDAs) communicating with
+        a service discovery protocol (SDP) over ACL similar to the pervasive 
+        discovery protocol (PDP) \cite{Campo2006}.
+      Figure \ref{fig:sdaagency} shows the FIPA compliant mobile agent 
+        architecture with the service discovery agent.
+      %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+      \begin{figure}%[!ht]
+      \begin{center}
+        \includegraphics[width=4.00in]{figures/sdaagency}
+      \end{center}
+      \caption{FIPA compliant mobile agency with the service discovery agent.}
+      \label{fig:sdaagency}
+      \end{figure}
+         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+   
+      Each robot node contains a service discovery agent that keeps track of the 
+        services the robot is willing to provide to other robots in the network.
+      In contrast, the directory facilitator (DF) of the FIPA compliant mobile 
+        agency will keep track of local services provided by on-board agents.
+      A robot node in need of a service will initiate a service search which is
+        dealt with by the service discovery agent.
+      The service discovery agent broadcasts a query request, SDP\_REQUEST, to 
+        service discovery agents on nearby robots.
+      If a robot contains the desired service, it broadcasts a reply message,
+        SDP\_REPLY.
+      All of the other SDAs on nearby robots will hear the reply and store the
+        information in their SDA lists.
+      If only one resource is found that provides the desired service, the robot
+        will have to wait until the resource becomes available.
+    %%% }}}
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+  %%%}}}
+  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+  \subsection{Flexible Multi-Robot System Compositions}
+  %%% {{{
+    Using Mobile-R, multiple types of multi-robot system compositions are 
+      capable as shown in Figures \ref{fig:homo_conf} and \ref{fig:hetero_conf}.
+
+    Figure \ref{fig:homo_conf} demonstrates the ability to create multi-robot
+      systems with homogeneous control structures.
+    Figure \ref{fig:reactivesystem} demonstrates the ability to create a purely 
+      reactive robot network in which the reactive agents are capable of sharing
+      behavior data for dynamic task allocation, role switching, and cooperative
+      task completion. 
+    This type of system composition provides a framework for swarm and modular 
+      robot system research.
+    Figure \ref{fig:deliberativesystem} demonstrates the ability to create a 
+      purely deliberative robot network.
+    As with the reactive system, the deliberative agents are capable of sharing 
+      high-level tactical information for coordination and collaboration. 
+     Figure \ref{fig:hybridsystem} demonstrates the ability of creating a 
+      hybrid control robot network where the robots contain both a deliberative
+      and a reactive component.
+    Combining both the reactive robot network and the deliberative network, the 
+      reactive agents and the deliberative agents are capable of communicating 
+      in order to accomplish the necessary tasks.
+    Figure \ref{fig:teleoperatedsystem} demonstrates the ability of 
+      implementing a pure tele-operated robot network.
+    Different level of tele-operations are possible allowing for either a
+      complete drive-by-wire system or semi-autonomous system.
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    \begin{figure}%[!ht]
+    \begin{center}
+      \subfigure[Reactive control robotic system network.]{
+         \includegraphics[width=2.8in]{figures/ReactiveArch-b}
+         \label{fig:reactivesystem}}
+      \subfigure[Deliberative control robotic system network.]{
+         \includegraphics[width=2.8in]{figures/DeliberativeArch-b}
+         \label{fig:deliberativesystem}} \\
+      \subfigure[Hybrid control robotic system network.]{
+         \includegraphics[width=2.8in]{figures/HybridArch-b}
+         \label{fig:hybridsystem}} 
+      \subfigure[Tele-operated control robotic system network.]{
+         \includegraphics[width=2.8in]{figures/TeleoperatedArch-b}
+         \label{fig:teleoperatedsystem}}
+    \end{center}
+    \caption{Different homogeneous control robotic network topological configurations.}
+    \label{fig:homo_conf}
+    \end{figure}
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+    Figure \ref{fig:hetero_conf} demonstrates the ability to create multi-robot
+      systems with heterogeneous control structures.
+    These systems provide the foundation for large scale multi-robot systems
+      comprising of different robotic paradigms.
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    \begin{figure}%[!ht]
+    \begin{center}
+      \includegraphics[width=4.0in]{figures/MixedArch-b}
+      \label{fig:mixedsystem}
+    \end{center}
+    \caption{Heterogeneous robotic system network topological configuration.}
+    \label{fig:hetero_conf}
+    \end{figure}
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+  % }}}
+  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+  \subsection{Inter-Agent Communication} \label{sec:fipa}
+  %%% {{{
+    Agent communication in a FIPA compliant mobile agent system is based on 
+      passing messages that must comply with the FIPA Agent Communication 
+      Language (ACL).
+    It is assumed that the underlying mobile agent system will contain the
+      required mechanisms for creating and reading FIPA ACL messages.
+    FIPA provides a set of agent interaction protocols, a high-level 
+      communication pattern through an admissible sequence of messages between 
+      agents, to direct agent conversation.
+    The existing FIPA interaction protocol specifications are listed below.
+    \begin{itemize}
+    \item FIPA Request Interaction Protocol Specifications
+    \item FIPA Query Interaction Protocol Specifications
+    \item FIPA Request When Interaction Protocol Specification
+    \item FIPA Contract Net Interaction Protocol Specification
+    \item FIPA Iterated Contract Net Interaction Protocol Specification
+    \item FIPA English Auction Interaction Protocol Specification
+    \item FIPA Dutch Auction Interaction Protocol Specification
+    \item FIPA Brokering Interaction Protocol Specification
+    \item FIPA Recruiting Interaction Protocol Specification
+    \item FIPA Subscribe Interaction Protocol Specification
+    \item FIPA Propose Interaction Protocol Specification
+    \end{itemize}
+    Implementation specific information is stored the available context 
+      tag which is a string that may contain any predefined message. 
+    The context tag must be understood by both communicating agents.
+    Mobile-R utilizes four specific FIPA interaction protocols: 
+      FIPA\_REQUEST, FIPA\_REQUEST\_WHENEVER, FIPA\_INFORM, and 
+      FIPA\_CONTRACT\_NET.
+
+    The FIPA\_REQUEST protocol is used to request immediate data or response to 
+      a query specified by the context tag. 
+    An example includes the request of a current sensor measurement or the 
+      control of an available resource.
+
+    The FIPA\_REQUEST\_WHENEVER protocol provides a means of acquiring multiple 
+      data measurements without having to request for it every time it is 
+      available.
+    This protocol is generally used with event dependent scenarios.
+    An example includes the request of a current sensor measurement whenever a 
+      new sensor measurement is acquired.
+    Instead of continuously requesting for new sensor data, the mobile agent 
+      handling the resource publishes the new data to subscribed mobile agents 
+      whenever new data is available.
+
+    The FIPA\_INFORM protocol is used to inform agents of changes to the system.
+    An example includes informing a mobile agent that a new service is available.
+ 
+    The FIPA\_CONTRACT\_NET protocol specifies problem-solving communication and 
+      control for agents in a distributed system \cite{Smith1980}.
+
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    \subsubsection{Deliberative and Reactive Agent Communication}
+    %%% {{{
+      The Deliberative Agent to Reactive Agent communication protocol contains 
+        handshaking messages to initiate collaboration and information exchange 
+        messages for behavioral arbitration.
+      The Deliberative Agent to Reactive Agent communication procedures are 
+        shown in Figure \ref{fig:datora}.
+      %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% FIG %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+      \begin{figure}%[!ht]
+      \begin{center}
+        \subfigure[Arbitration control request.]{
+           \includegraphics[width=2.50in]{figures/DAtoRA-a}
+           \label{fig:datora-a}}
+        \hspace{.5in}
+        \subfigure[Setting the arbitration scheme.]{
+           \includegraphics[width=2.50in]{figures/DAtoRA-b}
+           \label{fig:datora-b}}\\
+        \subfigure[Query request.]{
+           \includegraphics[width=2.50in]{figures/DAtoRA-c}
+           \label{fig:datora-c}}
+      \end{center}
+      \caption{Deliberative Agent to Reactive Agent communication.}
+      \label{fig:datora}
+      \end{figure}
+      %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% END FIG %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+      As shown in Figure \ref{fig:datora-a}, the Deliberative Agent first sends 
+        a FIPA\_REQUEST message to initiate arbitration control of the Reactive 
+        Agent.
+      If arbitration control has already be designated to a different 
+        Deliberative Agent, the Reactive Agent refuses.
+      Once control have been established, the Deliberative Agent can monitor 
+        the behavioral structure and modify it willingly by sending a 
+        FIPA\_INFORM message as shown in Figure \ref{fig:datora-b}.
+      The Deliberative Agent can also query the current behavioral structure 
+        and get an inventory of installed behavioral components by sending a 
+        FIPA\_REQUEST message as shown in Figure \ref{fig:datora-c}.
+    %%% }}}
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    \subsubsection{Deliberative and Hardware Agent Communication}
+    %%% {{{
+      The Deliberative Agent to Hardware Agent communication contains 
+        collaboration initialization, information exchange, and control 
+        messages.
+      The Deliberative Agent to Hardware Agent communication procedures are 
+        shown in Figure \ref{fig:datoha}.
+      %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% FIG %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+      \begin{figure}%[!ht]
+      \begin{center}
+        \subfigure[Hardware control request.]{
+           \includegraphics[width=2.50in]{figures/DAtoHA-a}
+           \label{fig:datoha-a}}
+        \hspace{.5in}
+        \subfigure[Setting the control parameters or actuator signals.]{
+           \includegraphics[width=2.50in]{figures/DAtoHA-b}
+           \label{fig:datoha-b}}\\
+        \subfigure[Sensor data query request.]{
+           \includegraphics[width=2.50in]{figures/DAtoHA-c}
+           \label{fig:datoha-c}}
+      \end{center}
+      \caption{Deliberative Agent to Hardware Agent communication.}
+      \label{fig:datoha}
+      \end{figure}
+      %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% END FIG %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+      On arrival, a Deliberative Agent sends a FIPA\_REQUEST message asking for
+        control of the system as shown in Figure \ref{fig:datoha-a}.
+      The Hardware Agent may respond with either a FIPA\_REFUSE or FIPA\_AGREE 
+        message.
+      If the Hardware Agent is already being controlled by another Deliberative 
+        Agent, the Hardware Agent refuses the new request.
+      As shown in Figure \ref{fig:datoha-b}, while controlling the Hardware Agent, 
+        the Deliberative Agent can query the Hardware Agent for a listing of 
+        available hardware modules and sub-module information, request sensor 
+        data, modify control parameters, and take direct physical control of 
+        the system by providing the necessary actuator signals.
+      Query interactions are accomplished using the FIPA\_REQUEST message
+        while commands are send using the FIPA\_INFORM message.
+      During its execution, the Deliberative Agent may require low-level sensor 
+        or robot data whenever the data becomes available.
+      Therefore, as shown in Figure \ref{fig:datoha-c}, the Deliberative Agent sends a 
+        FIPA\_REQUEST\_WHENEVER message to the Hardware Agent with the context 
+        tag containing the desired event and measurement tags.
+      The Hardware Agent may respond with either a FIPA\_REFUSE or FIPA\_AGREE 
+        message.
+      An example includes the acquisition of the current encoder information 
+        for odometry calculations.
+    %%% }}}
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    \subsubsection{Deliberative and Task Agent Communication}
+    %%% {{{
+      When a task agent has been received, the task agent will inform the 
+        Deliberative Agent of its presence by sending a FIPA\_INFORM message
+        carrying the priority of the task and the utility function service 
+        name provided by the task agent as shown in Figure \ref{fig:datota-a}.
+      If the task agent only contains high-level task commands, they will
+        be sent to the Deliberative Agent during the initial inform message
+        and the task agent will self terminate or migrate to another host.
+      Therefore, task agents can be told to migrate through all of the available
+        robots with different task commands for specific robots.
+      As shown in Figure \ref{fig:datota-b}, if the task agents contains a task 
+        service, the Deliberative Agent can then choose to execute the task service.
+      The procedures for Deliberative Agent to task agent communication is
+        shown in Figure \ref{fig:datota}.
+      %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% FIG %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+      \begin{figure}%[!ht]
+      \begin{center}
+        \subfigure[Task presence.]{
+           \includegraphics[width=2.50in]{figures/DAtoTA-a}
+           \label{fig:datota-a}}
+           \hspace{0.5in}
+        \subfigure[Executing a task service.]{
+           \includegraphics[width=2.50in]{figures/DAtoTA-b}
+           \label{fig:datota-b}}
+      \end{center}
+      \caption{Deliberative Agent to task agent communication.}
+      \label{fig:datota}
+      \end{figure}
+      %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% END FIG %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    %%% }}}
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    \subsubsection{Reactive and Behavior Agent Communication}
+    %%% {{{
+      The Reactive Agent to behavior agent communication procedures are shown 
+        in Figure \ref{fig:batora}.
+      %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% FIG %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+      \begin{figure}%[!ht]
+        \centerline{\includegraphics[width=2.5in]{figures/RAtoBA}}
+        \caption{Reactive Agent to behaviors agent communication.}
+        \label{fig:batora}
+      \end{figure}
+      %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% END FIG %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+      With the arrival of a new mobile behavior agent, the mobile behavior 
+        agent sends a FIPA\_INFORM message to the Reactive Agent with the context 
+        tag containing the names and types of the behavioral services that are 
+        available.
+      The Reactive Agent responds with FIPA\_CONFIRM indicating that it has 
+        received the information.
+      The Reactive Agent then adds the services to the respectable internal 
+        behavioral linked list for execution at each control interval.
+    %%% }}}
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    \subsubsection{Reactive and Hardware Agent Communication}
+    %%% {{{
+      The Reactive Agent to Hardware Agent communication procedures are shown
+        in Figure \ref{fig:ratoha}.
+      %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% FIG %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+      \begin{figure}%[!ht]
+      \begin{center}
+        \subfigure[Hardware control request.]{
+           \includegraphics[width=2.50in]{figures/RAtoHA-a}
+           \label{fig:ratoha-a}}
+        \hspace{.5in}
+        \subfigure[Sensor data query request.]{
+           \includegraphics[width=2.50in]{figures/RAtoHA-b}
+           \label{fig:ratoha-b}}\\
+        \subfigure[Setting the actuator signals.]{
+           \includegraphics[width=2.50in]{figures/RAtoHA-c}
+           \label{fig:ratoha-c}}
+      \end{center}
+      \caption{Reactive Agent to Hardware Agent communication.}
+      \label{fig:ratoha}
+      \end{figure}
+      %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% END FIG %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+      As shown in Figure \ref{fig:ratoha-a}, when the Reactive Agent is started, 
+        it sends a FIPA\_REQUEST message to the Hardware Agent to request control 
+        of the lower system and set the desired sensor data update interval.
+      Once approved, the Reactive Agent initiates a FIPA\_REQUEST\_WHENEVER
+        protocol with the Hardware Agent asking that the Hardware Agent inform 
+        the Reactive Agent of new sensory data when it is available as shown
+        in Figure \ref{fig:ratoha-b}.
+      When new sensor data is delivered to the Reactive Agent, it processes all 
+        of the required behavioral components and communicates the desired 
+        actuator control signals to the Hardware Agent using the FIPA\_INFORM 
+        protocol as shown in Figure \ref{fig:ratoha-c}.
+    %%% }}}
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    \subsubsection{Hardware and Device Agent Communication}
+    %%% {{{
+      The device agent to Hardware Agent communication procedures are shown in 
+        Figure \ref{fig:hatoda}.
+      %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% FIG %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+      \begin{figure}%[!ht]
+        \centerline{\includegraphics[width=2.5in]{figures/HAtoDA}}
+        \caption{Device agent to Hardware Agent communication.}
+        \label{fig:hatoda}
+      \end{figure}
+      %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% END FIG %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+      Similar to the behavior agent and Reactive Agent communication, with the 
+        arrival of a new mobile device agent, the device agent sends a 
+        FIPA\_INFORM message to the Hardware Agent with the context tag 
+        containing the names of the device services that have been added to the 
+        system and the type of services that they provide.
+      The Hardware Agent responds with FIPA\_CONFIRM indicating that it has 
+        received the information.
+      The Hardware Agent then adds the services to their respectable linked list
+        for execution at each control interval.
+      This allows for the build-up of different device informatic 
+        implementations.
+    %%% }}}
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+  %%% }}}
+  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+  \subsection{Inter-Robot Cooperative Agreements}
+  %%% {{{
+    During the operation of a network robot system, it may be necessary for 
+      robots to engage in collaborative work.
+    To do so, a robot will initiate a contract net or an auction with 
+      surrounding robots as shown in Figure \ref{fig:agreement-a}.
+    The other robots will then submit a bid based on their current state and 
+      potential gains as shown in Figure \ref{fig:agreement-b}.
+    The contract net communication procedures are shown in Figure 
+      \ref{fig:agreement-c}.
+    The initiator then selects the winning bid and proceeds with the 
+      collaborative work.
+    FIPA defines several multi-agent market-based communication protocols 
+      including contract nets, iterated contract nets, English auction, and 
+      Dutch auction.
+    These protocols are implemented in Mobile-C for inter-agent collaboration.
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    \begin{figure}%[!ht]
+    \begin{center}
+      \subfigure[A robot initiates an auction for collaboration.]{
+        \includegraphics[width=2.00in]{figures/RobotAgreement-a}
+        \label{fig:agreement-a}}
+      \hspace{1in}
+      \subfigure[The robots bid for the collaborative auction.]{
+        \includegraphics[width=2.00in]{figures/RobotAgreement-b}
+        \label{fig:agreement-b}}\\
+      \subfigure[Inter-robot contract net communication procedures.]{
+        \includegraphics[width=2.50in]{figures/ContractNet}
+        \label{fig:agreement-c}}
+    \end{center}
+    \caption{A cooperative agreement auction.}
+    \label{fig:agreement}
+    \end{figure}
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+  %%% }}}
+  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+  \subsection{Physical and Virtual Robot Hardware Abstraction Layer} \label{sec:hal}
+  %%% {{{
+    Mobile-R has the capability of interacting with both virtual robots 
+      in a simulation environment and physical robots interchangeably.
+    Control of a robot is accomplished through a hardware abstraction
+      layer (HAL) as shown in Figure \ref{fig:systemarch}.
+    The HAL contains wrappers to hardware dependent control libraries which 
+      act as a low-level middleware to hide the heterogeneity of the 
+      underlying robot hardware.
+    By using the libraries provided by available multi-robot simulation systems
+      and robot manufactures, new wrappers can easily be developed allowing the 
+      Mobil-R system to have complete functionality over the different
+      types of physical and virtual robots.
+    With this versatility, researchers are able to continue using the simulation 
+      system they are familiar with and currently using.
+    Mobile-R users may also implement in-house simulation systems and generate 
+      their own wrappers.
+  %%% }}}
+  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+  \subsection{High-Level Packages}
+  %%% {{{
+    Mobile-R also provides higher functionality packages to enhance 
+      system capabilities.
+    These packages currently include an artificial neural network, genetic 
+      algorithm, vision, and distributed computing modules.
+
+    Artificial Neural Networks (ANN) are bio-inspired mechanisms of data
+      processing that enables systems to learn and potentially generalize after 
+      solutions to enough problems set are taught.
+    Artificial neural networks have been used for many different types of 
+      applications including adaptive controller designs and object detection
+      and characterization with vision systems.
+    The package provides users with the ability to create neural 
+      networks in their robot control architecture agents, thus allowing for
+      the implementation of learning networks.
+
+    Genetic algorithms (GAs) are global search heuristics used to find exact or
+      approximate solutions to optimization and search problems.
+    The are a particular type of evolutionary algorithm inspired by evolutionary
+      biology.
+    Genetic algorithms have been used for robot learning and path planning.
+    The genetic algorithms package provides users with the ability to quickly
+      implement and use a genetic algorithm based system.
+      
+    The computer vision package facilitate the acquisition of video or image 
+      data from on-board vision sensors.
+    It provides many functional tools including object and face recognition,
+      3D reconstruction, and much more.
+    The package also provides the necessary tools for image manipulate which may
+      be necessary in order to save on-board storage or reduce the amount of
+      data transmitted from one node to another. 
+
+%    One benefit of having many robots in a multi-robot system is the ability to
+%      pool all of their computing power together.
+%    A distributed computing package is provided to allow multiple robot nodes 
+%      to work together in order to solve a computationally intensive problem.
+%    If desired, a robot can request the computational resources from any
+%      available node around it.
+%    This can include any type of computing system from other robots to
+%      computer systems attached to the same network.
+  %%% }}}
+  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+  % }}}
+  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+  \section{Deployment System} \label{sec:ds}
+  %%% {{{
+    The deployment system framework is shown in Figure \ref{fig:deploy_arch}.
+    The deployment system contains a multitude of mobile robotic and stationary 
+      robotic systems, human machine interface, planner, agent composer, and 
+      deployer.
+
+    \begin{figure}%[!ht]
+      \centerline{\includegraphics[width=4.0in]{figures/Deployment}}
+      \caption{The deployment system framework.}
+      \label{fig:deploy_arch}
+    \end{figure}
+
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    \subsection{Mobile and Stationary Robotic Systems}
+    %%% {{{
+      The mobile and stationary robotic systems are assumed to 
+        be initially accessible by the deployment system through
+        various types of communication buses.
+      Once the control architectures of the mobile robotic systems have 
+        been deployed, the mobile robotic systems may remove themselves 
+        from the original communication infrastructure in order to
+        form groups and perform their tasks.
+    %%% }}}
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    \subsection{Human Machine Interface}
+    %%% {{{
+      The human machine interface provides a method for users to input the 
+        required system parameters.
+      The deployment human machine interface will generally consist of an 
+        interface providing users with multiple levels of granularity.
+      Users can either simply select a mission or provide high level mission
+        commands and allow the system to automatically select all of the
+        necessary sub-components or actively select individual sub-components
+        themselves.
+      Enabling multiple levels of granularity provides simplified access to 
+        users learning to interact with the system and low-level integration
+        for more experienced users.
+      The human machine interface also provides a mechanism to allow users to
+        update, remove, or add components to the knowledge base.
+      These components include writing or modifying C based functions.
+    %%% }}}
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    \subsection{Planner}
+    %%% {{{
+      The planner utilizes a schema approach in order to select the
+        appropriate robots and actions based on the provided tasks.
+      The planner may decompose the tasks into sub-tasks if necessary and
+        branch robots into separate groups.
+      The planner currently utilizes a greedy algorithm for resource allocation.
+      First, the planner allocates tasks that utilize specific resources to
+        robots capable of providing them.
+      Next, the system concentrates on tasks that require collaboration.
+      Finally, the system allocates the rest of the tasks to available
+        robots.
+    %%% }}}
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    \subsection{Agent Composer}
+    %%% {{{
+      Once the planner has completed, the allocated tasks are broken down
+        into required actions from actuator movements to communications.
+      Doing so provides a component requirement matrix for each robot.
+      The component requirement matrix is used to combine the necessary
+        components from the knowledge base to form the necessary mobile
+        agents which are then passed to the deployer.
+    %%% }}}
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    \subsection{Deployer}
+    %%% {{{
+      The deployer sends the composed agents to their respective robots.
+      The deployer handles all of the necessary protocols over the
+        various communication buses within the system.
+    %%% }}}
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    \subsection{Knowledge Base}
+    %%% {{{
+      The knowledge base contains all of the necessary information for
+        distributed the desired tasks or sub-tasks to the appropriate robot.
+      This include a listing of all possible actions and behavioral components 
+        implementations for each robot, their available sensors, required 
+        communication protocols, and informatic algorithms.
+      All of the information is assumed to be present before task allocation 
+        is begun.
+      However, after the robots have completed their tasks and have returned 
+        back, they may upload any new information including learned behaviors.
+      The global mission constitutes a combination of multiple tasks.
+      Tasks will be created by an external user or by the decomposition of a 
+        mission statement by higher level systems.
+      The knowledge base will also contain the necessary low-level 
+        device control modules necessary for the Hardware Agent to control the 
+        robotic hardware.
+    %%% }}}
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+  %%% }}}
+  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

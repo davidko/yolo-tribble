@@ -1,0 +1,541 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% begin Validation
+\chapter{Validation and Testing of Mobile-R} \label{sec:validation}
+
+  The validation and test of the Mobile-R system was performed in the 
+    Integration Engineering Laboratory (IEL) at the University of California, 
+    Davis.
+  Both physical and virtual robots were used in the validation experiments.
+  The following sections describe the concept of each test and their 
+    results.
+  Section \ref{sec:val_1} demonstrates the ability of Mobile-R to compose and
+    deploy robot control system mobile agents.
+  Section \ref{sec:val_2} verifies the migration capability of the robot
+    control system mobile agents.
+  Section \ref{sec:val_3} demonstrates the service discovery capabilities of
+    the Mobile-R service discovery agents.
+  Section \ref{sec:val_4} validates the use of the Mobile-R FIPA 
+    communication module for cooperative task execution through contract nets.
+
+  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+  \section{Agent Composition and Deployment}\label{sec:val_1}
+  %%% {{{ 
+    A real-world experiment was conducted to verify the automatic composition
+      and deployment of the Mobile-R agents to physical and
+      virtual mobile robots.
+    The experiment involved mapping of the current environment by having the
+      robot follow the perimeter of a designated area while avoiding obstacles.
+    The Reactive Agent was used to handle the wall following and obstacle 
+      avoidance while the Deliberative Agent was used to estimate odometry
+      readings.
+    The robot logged the odometry readings to the deployment system every 30 
+      seconds.
+    Such a mission is used in perimeter patrolling where the available robots 
+      are used to first map the surrounding areas and then sent on patrol to 
+      detect for any intruders.
+    Figure \ref{fig:validation1} shows the overall system implementation for the 
+      validation experiment.
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%% FIG %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    \begin{figure}%[!ht]
+      \centerline{\includegraphics[width=6.0in]{figures/validation1}}
+      \caption{The deployment of Mobile-R mobile agents.}
+      \label{fig:validation1}
+    \end{figure}
+    %%%%%%%%%%%%%%%%%%%%%%%%%% END FIG %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    The validation experiment was carried out using a K-Team Khepera III mobile
+      robot, discussed in Section \ref{sec:supportedrobots}, and two simulated
+      Pioneer2DX in the Stage simulation system.
+    The Khepera III is placed inside of a designated environment with an 
+      irregular perimeter as shown in Figure \ref{fig:val1_real_world} while the 
+      simulated robots are placed inside a virtual world shown in Figure
+      \ref{fig:val1_sim_world}.
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%% FIG %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    \begin{figure}%[!ht]
+    \begin{center}
+      \subfigure [The real world environment for the Khepera III robot.]
+        {\includegraphics[width=2.5in]{figures/kh_exp}
+        \label{fig:val1_real_world}} \hspace{.5in}
+      \subfigure [The simulated environment with two Pioneer2DX robots.]
+        {\includegraphics[width=2.5in]{figures/sim_exp}
+        \label{fig:val1_sim_world}}
+    \caption{The agent composition and deployment experimental setup.}
+    \label{fig:val1}
+    \end{center}
+    \end{figure}
+    %%%%%%%%%%%%%%%%%%%%%%%%%% END FIG %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    Figure \ref{fig:deploymentsystem} shows the user interface of the 
+      deployment system and the execution of the mission.
+    A detailed explanation of the commands used in the interface is provided in 
+      Section \ref{sec:imp_deploy}.
+    From Figure \ref{fig:deploymentsystem}, the user first detects all of the
+      available robots in the network, 3 robots were found.
+    The user then lists the currently available missions of which perimeter
+      patrolling, area surveying and building construction have not been
+      implemented but have been added for demonstration purposes.
+    Next, two groups are created: G0 and G1.
+    Then, robot R1 is assigned to group G0 and robots R0 and R2 are assigned 
+      to group G1.
+    The robot groups G0 and G1 are assigned to mission M0 in order to map
+      their current environment.
+    Afterward, the desired logging information is enabled and the deployment 
+      processes is started.
+    The planner breaks the perimeter mapping into the necessary components 
+      including odometry measurements, wall following and obstacle avoidance.
+    The planner sends the necessary information to the agent composer.
+    The necessary Mobile-R agents are composed and then deployed to the
+      respective robots. 
+    Finally, the deployment system drops in logger mode to display the desired
+      log information.
+    After a few log information has been displayed, the mission is stopped and 
+      the deployment system is exited.
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%% FIG %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    \begin{figure}%[!ht]
+     \centerline{\includegraphics[width=5.0in]{figures/DeploymentSystem}}
+     \caption{Deployment system dispatching mobile agents to robot groups.}
+     \label{fig:deploymentsystem}
+    \end{figure}
+    %%%%%%%%%%%%%%%%%%%%%%%%%% END FIG %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+    % Generated deliberative, reactive and hardware agents
+
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    \subsection{Behavior Implementations} \label{sec:val_behavior}
+    %%% {{{
+      Two behaviors were used for the validation experiment: obstacle avoidance
+        and wall-following.
+      The behaviors are implemented based on the Braitenberg algorithm discussed
+        in Section \ref{sec:imp_behaviors}.
+      The knowledge base of the deployment system contains a listing of all 
+        available behaviors and automatically adjusts them for the type or robot
+        that is used.
+    
+      The K-Team Khepera III and the Pioneer 2DX are both differential drive
+        robots.
+      Therefore, the motor output array, $\mathbf{M}$, and speed adjustment 
+        array, $\mathbf{A}$ from Equation \ref{eqn:behavior} are of size (2x1) 
+        and defined as
+       \begin{eqnarray*}
+         \mathbf{M}^{T}&=&\left[\begin{array}{cc}m_{L} & m_{R}\end{array}\right]\\
+         \mathbf{A}^{T}&=&\left[\begin{array}{cc}a_{L} & a_{R}\end{array}\right]
+       \end{eqnarray*}
+       where $m_{L}$ and $a_{L}$ correspond to the left motor and
+       $m_{R}$ and $a_{R}$ correspond to the right motor.
+
+      Since the validation experiment only utilizes the Khepera III on board 9 IR 
+        sensors and the Pioneer 2DX on board 16 sonar rangers, the 
+        motor-to-sensor weights matrix, $\mathbf{W}$, from Equation 
+        \ref{eqn:behavior} is of size (9x1) for the Khepera and (16x1) for the 
+        Pioneer.
+      They are defined as 
+        \begin{eqnarray*}
+         \mathbf{W}_{K}^{T}&=&\left[
+         \begin{array}{cccc}
+           w_{1,1} & w_{1,2} & ... & w_{1,9}\\
+           w_{2,1} & w_{2,2} & ... & w_{2,9}
+         \end{array}
+         \right]\\
+         \mathbf{W}_{P}^{T}&=&\left[
+         \begin{array}{cccc}
+           w_{1,1} & w_{1,2} & ... & w_{1,16}\\
+           w_{2,1} & w_{2,2} & ... & w_{2,16}
+         \end{array}
+         \right]\\
+        \end{eqnarray*}
+        where $w_{1,1},w_{1,2},...,w_{1,N}$ and $w_{2,1},w_{2,2},...,w_{2,N}$ 
+        correspond to the left and right motors, respectively.
+      For the Khepera, from Figure \ref{fig:khir}, $w_{1,1},...,w_{1,4}$ and 
+        $w_{2,1},...,w_{2,9}$ correspond to the left sensors of the Khepera III 
+        mobile robot while $w_{1,5},...,w_{1,8}$ and $w_{2,5},...,w_{2,8}$ 
+        correspond to the right sensors.
+      The motor-to-sensor weights $w_{1,9}$ and $w_{2,9}$ correspond to the 
+        rear sensor.
+      For the Pioneer 2DX, $w_{x,1},w_{x,2},w_{x,15}$ and $w_{x,16}$
+        correspond to the front sensors, $w_{x,7},...,w_{x,9}$ to the rear 
+        sensors, $w_{x,3},...w_{x,6}$ to the left sensors, and
+        $w_{x,11},...w_{x,13}$ to the right sensors with $x=1,2$.
+
+      For simplicity, the following sections only refer to the Khepera III
+        mobile robot.
+      The implementation for the Pioneer 2DX can be inferred.
+
+      %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+      \subsubsection{Obstacle Avoidance Behavior}
+      %%% {{{
+        The obstacle avoidance algorithm has an inverse relationship between the 
+          sensors and motors where the right side sensors, when activated, force 
+          the left motor to slow down while the left side sensors, when 
+          activated, force the right motor to slow down.
+        The obstacle avoidance motor-to-sensor weights matrix and adjustment 
+          array from Equation \ref{eqn:behavior} are given as
+        \begin{eqnarray*}
+          \mathbf{W}&=&\left[
+          \begin{array}{ccccccccc}
+            5 & 1 & 2 &  5 &-15 &-6 &-2 &2 &7\\
+            2 &-2 &-6 &-15 &  5 & 2 & 1 &5 &7
+          \end{array}
+          \right]\\
+          \mathbf{A} &=& \left[
+          \begin{array}{c}
+            50 \\
+            50
+          \end{array}
+          \right]
+        \end{eqnarray*}
+        The speed adjustment is used to force the system to continue in a 
+          forward direction.
+        The specific values for the obstacle avoidance behavior were obtained 
+          from the K-Team Khepera III test code available with their development 
+          library \cite{kteam}.
+      %%% }}}
+      %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+      %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+      \subsubsection{Wall-following Avoidance Behavior}
+      %%% {{{
+        The wall-following algorithm relies solely on a specified sensor side.
+        The implemented wall-following algorithm follows walls on the left side
+          of the mobile robot.
+        The wall-following motor-to-sensor weights matrix and adjustment array
+          from Equation \ref{eqn:behavior} are given as
+        \begin{eqnarray*}
+          \mathbf{W}&=&\left[
+          \begin{array}{ccccccccc}
+           0 &  1 &  1 &  4 &  0 & 0 & 0 &0 &0\\
+           0 & -1 & -1 & -4 &  0 & 0 & 0 &0 &0
+          \end{array}
+          \right]\\
+          \mathbf{A}&=&\left[
+          \begin{array}{c}
+           -300 \\
+            300
+          \end{array}
+          \right]
+        \end{eqnarray*}
+        The speed adjustment is used to force the system to rotate to the left 
+          until a wall is found.
+        The specific values for the wall-fallowing behavior were chosen through 
+          experimentation with the system.
+      %%% }}}
+      %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    %%% }}}
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    \subsection{Knowledge Database}
+    %%% {{{
+    The SQLight database entries of the behaviors used in the validation 
+      experiment are shown in Figure \ref{fig:db_behaviors}.
+    Each behavior entry contains the name of the behavior, information
+      pertaining to the robot that the behavior was designed for,
+      provision information which determine what service is provided and the
+      actual C function code of the behavior.
+    The first behavior deals with obstacle avoidance in which the sensor
+      weight matrix, $w$, causes the robot to move in the opposite direction
+      of the highest sensor reading.
+    The second behavior provides wall-following capabilities and only deals
+      with the front and front-left sensors.
+    \begin{figure}%[!ht]
+      \begin{center}
+      \footnotesize{\baselineskip 1em \verbatiminput{code/b_data_kh3.txt}}
+      \end{center}
+      \caption{Database entries for the Khepera III behavior functions.}
+      \label{fig:db_behaviors}
+    \end{figure}
+    %%% }}}
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+  
+    %%% }}}
+  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+  \section{Simulation to Physical System Migration} \label{sec:val_2}
+  %%% {{{
+    One important feature of the Mobile-R robot control system is its ability 
+      to completely migrate from one host to another.
+    This provides system level mission fault-tolerance.
+    If a robot with a critical mission task begins to fail, the on-board 
+      Mobile-R agents can migrate to a nearby robot and continue its 
+      task or eventually transfer to a fresh robot.
+    This works best with a learning system such as those with behavioral 
+      learning or a deliberative system that stores information concerning 
+      the mission on-board.
+    Another strong point for Mobile-R agent migration is the use of a 
+      virtual robot for learning and then migrating the agents to a real robot
+      for actual field use.
+    The migration test from the simulation system to the physical system is 
+      performed using a Stage virtual robot and a Khepera III mobile robot.
+    A previously deployed Mobile-R robot control system was sent to the virtual 
+      robot with a task of exploring its environment.
+    The Mobile-R robot control system is then instructed to migrate to the mobile 
+      robot and continue its exploration task.
+    Figure \ref{fig:validation2} shows the system setup for the validation 
+       experiment.
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%% FIG %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    \begin{figure}%[!ht]
+      \centerline{\includegraphics[width=5.0in]{figures/validation2}}
+      \caption{The system migration from a virtual to a physical entity.}
+      \label{fig:validation2}
+    \end{figure}
+    %%%%%%%%%%%%%%%%%%%%%%%%%% END FIG %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+    Figure \ref{fig:validation2results-a} shows the output from the 
+      Mobile-R robot control system running on the virtual robot and Figure 
+      \ref{fig:validation2results-b} shows the output from the Mobile-R robot
+      control system running on the physical robot.
+    The Mobile-R robot control system was able to successfully migrate from the 
+      virtual to the physical system and continue its task.
+    In order to handle the changes in the robot physiology, the deployed
+      Mobile-R robot control system contained two different behaviors for exploring: 
+      one for the Khepera III and one for the virtual Pioneer 2DX.
+    The Khepera III behavior utilizes the 9 on-board IR sensors while the
+      Pioneer 2DX version relies on the 16 on-board sonar sensors.
+    After the Mobile-R robot control system migrates to the physical Khepera III
+      robot, it receives information from the hardware abstraction layer
+      and changes the internal behavior from the Pioneer 2DX version to the 
+      Khepera III version.
+    The migration capability of the Mobile-R robot control system allows the 
+      system to learn from the simulated environment and then migrate to a 
+      physical system, applying everything it has learned to the real world 
+      scenario.
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%% FIG %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    \begin{figure}%[!ht]
+      \begin{center}
+      \subfigure[A screen capture of the Mobile-R robot control system on Monkey.]
+        {\includegraphics[width=4.0in]{figures/MigrationExp_MonkeyServerWindow} }
+      \subfigure[A view of the Stage simulation system.]
+        {\includegraphics[width=4.0in]{figures/MigrationExp_StageWindow} }
+      \end{center}
+      \caption{The output of the Mobile-R robot control system running on the virtual 
+               robot.}
+      \label{fig:validation2results-a}
+    \end{figure}
+    %%%%%%%%%%%%%%%%%%%%%%%%%% END FIG %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%% FIG %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    \begin{figure}%[!ht]
+        \centerline{\includegraphics[width=5.0in]{figures/MigrationExp_KorebotServerWindow}}
+      \caption{The output of the Mobile-R robot control system running on the 
+               Khepera robot.}
+      \label{fig:validation2results-b}
+    \end{figure}
+    %%%%%%%%%%%%%%%%%%%%%%%%%% END FIG %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+  %%% }}}
+  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+  \section{Service Discovery for Cooperative Behaviors} \label{sec:val_3}
+  %%% {{{
+    A validation experiment was conducted to verify the service discovery for 
+      cooperative behaviors with Mobile-R agents.
+    The validation experiment consisted of the Khepera III mobile robot, a Puma 
+      560 robot manipulator with a Logitech color camera attached to it, and
+      a separate PC.
+    In all 3 computer systems where used: mouse2.engr.ucdavis.edu, 
+       iel2.engr.ucdavis.edu and korebot.engr.ucdavis.edu.
+    The mouse2 machine is attached to the Puma 560 and communicates with the 
+      Logitech camera.
+    It also contains the Ch OpenCV package which can be used for different
+      types of computer vision applications.
+    The iel2 machine is used as the separate PC to demonstrate the service 
+      discovery agent's ability to gather information from other service 
+      discovery agents' replies to requests.
+    The korebot machine is the computer system of the Khepera III.
+
+    In the experiment, the Khepera III is required to traverse a cluttered 
+      area and does so by collaborating with the Puma for vision based path 
+      planning.
+    Figure \ref{fig:validation3} shows the system setup for the service 
+      discovery validation experiment and Figure \ref{fig:validation3-b} shows
+      the steps taken by the Mobile-R components.
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%% FIG %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    \begin{figure}%[!ht]
+      \centerline{\includegraphics[width=3.0in]{figures/validation3}}
+      \caption{The service discovery validation system setup.}
+      \label{fig:validation3}
+    \end{figure}
+    %%%%%%%%%%%%%%%%%%%%%%%%%% END FIG %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+    The steps shown in Figure \ref{fig:validation3-b} are as follows:
+    \begin{enumerate}
+    \item The Deliberative Agent of the Puma 560 registers its OpenCV capable 
+            vision service with its SDA.
+    \item The Khepera Mobile-R robot control system is initialized and the 
+            Deliberative Agent requests a vision service from its SDA.
+    \item The Khepera III SDA broadcasts a request for a vision service.  
+          The Puma 560 SDA receives the request and replies.
+    \item The Khepera III SDA communicates with the original requesting
+            Deliberative Agent that a service has been found and provides the 
+            service location.
+    \item The Khepera III Deliberative Agent creates a task agent with the 
+            necessary OpenCV vision processing code sends the task to the 
+            location of the vision service, the Puma 560.
+    \end{enumerate}
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%% FIG %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    \begin{figure}%[!ht]
+      \centerline{\includegraphics[width=4.0in]{figures/validation3-b}}
+      \caption{Steps involved in the service discovery validation.}
+      \label{fig:validation3-b}
+    \end{figure}
+    %%%%%%%%%%%%%%%%%%%%%%%%%% END FIG %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+    The task agent sent to the Puma 560 captures an image from the Logitech 
+      camera and processes the camera for the position of the mobile robot and 
+      any obstacles, simulated using cups.
+    Figure \ref{fig:validation3-results-mouse2}, 
+      \ref{fig:validation3-results-iel2} and 
+      \ref{fig:validation3-results-korebot} show the final results of the 
+      system on mouse2, iel2, and the korebot, respectively.
+    Figure \ref{fig:validation3-results-b} shows the found objects in the image
+      taken from the Logitech camera attached to the Puma 560.
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%% FIG %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    \begin{figure}%[!ht]
+      \begin{center}
+      \includegraphics[width=5.0in]{figures/SDAExp_Mouse2_Window}
+      \end{center}
+      \caption{The service discovery validation output of the server running on Mouse2.}
+      \label{fig:validation3-results-mouse2}
+    \end{figure}
+    %%%%%%%%%%%%%%%%%%%%%%%%%% END FIG %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%% FIG %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    \begin{figure}%[!ht]
+      \begin{center}
+      \includegraphics[width=5.0in]{figures/SDAExp_Iel2_Window}
+      \end{center}
+      \caption{The service discovery validation output of the server running on Iel2.}
+      \label{fig:validation3-results-iel2}
+    \end{figure}
+    %%%%%%%%%%%%%%%%%%%%%%%%%% END FIG %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%% FIG %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    \begin{figure}%[!ht]
+      \begin{center}
+      \includegraphics[width=5.0in]{figures/SDAExp_Korebot_Window}
+      \end{center}
+      \caption{The service discovery validation output of the server running on Korebot.}
+      \label{fig:validation3-results-korebot}
+    \end{figure}
+    %%%%%%%%%%%%%%%%%%%%%%%%%% END FIG %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%% FIG %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    \begin{figure}%[!ht]
+      \begin{center}
+        \subfigure[The service discovery validation experimental setup showing
+                   the Puma 560 and the Khepera III mobile robot.]
+          {\includegraphics[width=3.0in]{figures/validation3-exp}}
+        \subfigure[The processed image from the Logitech camera connected to the 
+                   Puma 560.]
+          {\includegraphics[width=3.0in]{figures/validation3-results-a}}
+      \end{center}
+    \caption{The service discovery validation experimental setup and 
+             resulting processed image.}
+    \label{fig:validation3-results-b}
+    \end{figure}
+    %%%%%%%%%%%%%%%%%%%%%%%%%% END FIG %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+  %%% }}}
+  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+  \section{Contract Net Using the FIPA Communication Module} \label{sec:val_4}
+  %%% {{{
+    This experiment validates the use of the FIPA communication module 
+      developed for Mobile-R in a market-based cooperative task execution 
+      applications using the FIPA contract net protocol.
+    A good example of market based collaboration in planetary reconnaissance 
+       was presented by Dias \textit{et. al} \cite{Dias2006}.
+    The examples portrays a groups of robots surveying selected craters.
+    A robot set ups a contract net to select which robot should survey a
+      specific crater.
+    The negotiator sends out a call-for-proposals, accepts bids from available
+      robots, and selects a winner based on minimum cost.
+    The provided bids are based on the distance where the robot is from the 
+      crater and possibly other resources.
+    The example has been simulated using Mobile-R and the Stage simulation 
+      system.
+    Figures \ref{fig:contractnet-exp-a} and \ref{fig:contractnet-exp-b} show 
+      the system setup for the FIPA communications module validation experiment.
+    The Mobile-R robot control systems on robots 0, 1, and 2 were previously
+      deployed to complete other desired tasks.
+    The Mobile-R robot control system on robot 3 was deployed to survey 
+      multiple craters.
+    In order to increase overall efficiency, robot 3 initiated a contract net.
+    As shown in Figure \ref{fig:contractnet-exp-a}, all of the robot control
+      systems contain a hardware agent and a deliberative agent.
+    All of the FIPA protocol handling in accomplished in the deliberative agent.
+    The hardware agent provides a means to acquire the robots current position.
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%% FIG %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    \begin{figure}%[!ht]
+      \begin{center}
+      \subfigure[The setup for the FIPA communication validation experiment 
+                 using contract net.]{
+      \includegraphics[width=4.5in]{figures/ContractNet-ExpSetup}\label{fig:contractnet-exp-a}} \\
+      \subfigure[A screen shot of the Stage simulation setup]{
+      \includegraphics[width=4.5in]{figures/ContractNet-Exp}\label{fig:contractnet-exp-b}}
+      \end{center}
+      \caption{FIPA communications validation experiment using contract net.}
+      \label{fig:contractnet-exp}
+    \end{figure}
+    %%%%%%%%%%%%%%%%%%%%%%%%%% END FIG %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    From Figure \ref{fig:contractnet-exp-b}, robot 3 enters the area and sends 
+      out a call-for-proposals in a FIPA ACL message for surveying area A at 
+      (-5.70, 5.26).
+    Robots 0, 1, and 2 respond with their bids.
+    Their current positions are shown in Figure \ref{fig:contractnet-exp-b}
+      with a pose tuple giving their X coordinate, Y coordinate, and rotation
+      relative to the x-axis.
+    The cost function is simply relative to their distance from the requested
+      survey location multiplied by a weight value of 3.125, selected to 
+      provide large bid values.
+    From Figure \ref{fig:contractnet-exp-b}, it is expected that Robot 2 shall
+      win the contract.
+
+    The experiment was run on a single computer, Monkey, with four separate
+      Mobile-R robot control systems.
+    Each Mobile-R robot control system had control of a single robot in the virtual
+      environment.
+    Robot 0 was controlled by the Mobile-R robot control system running on port
+      5050.
+    Robot 1 was controlled by the Mobile-R robot control system running on port
+      5051.
+    Robot 2 was controlled by the Mobile-R robot control system running on port
+      5052.
+    Robot 3 was controlled by the Mobile-R robot control system running on port
+      5053.
+    The results from the validation experiment are given in Figures
+      \ref{fig:contractnet-r0}, \ref{fig:contractnet-r1}, 
+      \ref{fig:contractnet-r2}, and \ref{fig:contractnet-r3}, respectively.
+    In Figure \ref{fig:contractnet-r3}, three bids are presented with the 
+      winning bid being the lowest.
+    Figure \ref{fig:contractnet-r2} shows that robot 2 won the contract
+      which coincides with the location of robot 2 as shown in Figure
+      \ref{fig:contractnet-exp-b}.
+    The mobile agent code for the deliberative agent used in this experiment
+      is provided in \ref{appendix:deliberative}.
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%% FIG %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    \begin{figure}%[!ht]
+      \begin{center}
+      \subfigure[Screen capture of Mobile-R controlling robot 0.]
+        {\includegraphics[width=4.0in]{figures/ContractNet-D}\label{fig:contractnet-r0}} \\
+      \subfigure[Screen capture of Mobile-R controlling robot 1.]
+        {\includegraphics[width=4.0in]{figures/ContractNet-C}\label{fig:contractnet-r1}}\\
+      \subfigure[Screen capture of Mobile-R controlling robot 2.]
+        {\includegraphics[width=4.0in]{figures/ContractNet-B} \label{fig:contractnet-r2}}\\
+      \subfigure[Screen capture of Mobile-R controlling robot 3.]
+        {\includegraphics[width=4.0in]{figures/ContractNet-A} \label{fig:contractnet-r3}}
+      \end{center}
+      \caption{The output of the Mobile-R robot control systems running on four 
+               virtual robots.}
+      \label{fig:contractnet-results}
+    \end{figure}
+    %%%%%%%%%%%%%%%%%%%%%%%%%% END FIG %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+  %%% }}}
+  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+%  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%  \section{Migration Timing Test}
+%  %%% {{{
+%  %%% }}}
+%  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

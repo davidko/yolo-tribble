@@ -1,0 +1,557 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% begin Cooperative Multi-Robot Systems
+
+\chapter{Cooperative Multi-Robot Systems}
+
+  With the advent of wireless sensor networks and other ubiquitous embedded 
+    devices, multi-robot systems have grown to include may latest technology in 
+    which the robots may interact with.
+  The new terminology, network robot systems, indicates that a group of robots 
+    not only must communicate with each other in order to cooperatively finish a 
+    group goal but also be capable of interacting with other available sensors
+    distributed around the environment and accept commands from humans.
+  When dealing with network robot system applications, tasks are generally 
+    cooperative-based and the global goal of a system is achieved through the 
+    collaboration of a team of robots that have a variety of specialized skills. 
+  One grand challenge of controlling mobile robots in these types of scenarios 
+    is that ``\textit{groups of this type will typically operate with little or 
+    no direct human supervision, and it will be difficult, if not impossible, to
+    efficiently manage or control such groups through programming or 
+    teleoperation. 
+  Thus, managing such large groups will be extremely challenging and will 
+    require the application of new, yet-to-be-developed methods of communications, 
+    control, computation, and sensing specifically tailored to the control of 
+    autonomously functioning robot networks}'' as pointed out by Kumar, Rus and 
+    Singh \cite{Kumar2004}.
+%  Controlling such \textit{autonomously functioning robot networks} in these types 
+%    of scenarios is very challenging \cite{Kumar2004}.
+  The mobile robots must function autonomously, where low-level controls are 
+    handled by robot themselves and high level tasks are used for the robot 
+    cooperation to accomplish a given mission. 
+  A lot of research has been focused on the cooperation aspects of network robot 
+    systems 
+    \cite{Parker2009,Li2008,Cao1997,Min1998,Fong2003,Kube1992,
+          Pirjanian2000,Pirjanian2000b,Beni1989,Mataric1992}.
+  Some systems explicitly define cooperation and coordination withing the
+    programming of the nodes \cite{Levner2006,Asama1989}.
+  The two research topics stated as being imperative for effective deployment of
+    network robot systems are technology integration and formal methods for 
+    cooperation \cite{Saffiotti2008}.
+
+  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+  \section{Key Aspects of Cooperative Multi-Robot Systems}
+  %%% {{{
+
+    There are five major research areas related to cooperative network robot 
+      systems: group architecture, resource conflict resolution mechanism, 
+      origins of cooperation, learning, and geometric problems \cite{Cao1997}.
+    Although geometric problems may also be considered a specific research 
+      topics for cooperative systems, they are assumed to be a construct of the 
+      application and therefore application dependent.
+    An additional requirement for the construct of cooperative behaviors is the 
+      availability of a service discovery mechanism and a mechanism for task 
+      sharing or reallocation.
+    The key aspects of a cooperative network robot system is summarized to be 
+      the first four research areas previously stated and mechanisms for service 
+      discovery and task sharing.
+
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    \subsection{Group Architecture}
+    %%% {{{
+      The group architecture provides the infrastructure for collective
+        behaviors \cite{Cao1997}.
+      A general network robot system framework must be able to support
+        multiple types of group architectures and provide the necessary
+        mechanism for intra-robot communication and agent modeling.
+    %%% }}}
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    \subsection{Resource Conflict Resolution Mechanism}
+    %%% {{{
+      Resources in a network robot system, especially in a heterogeneous setup,
+        are high value commodities with limited availability.
+      Therefore, a mechanism is necessary to properly allocate usage of each
+        resources to all individual robot nodes.
+      The mechanism should allocate equal time to all subscribing users,
+        provide more time for time critical tasks, and allow high priority
+        nodes the ability to acquire the resource from other users.
+    %%% }}}
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    \subsection{Origins of Cooperation}
+    %%% {{{
+      The origins of cooperation refers to the motivations behind cooperation
+        \cite{Cao1997}.
+      In other words, given a request for assistance or usage of a resource,
+        under what merits should the service provider choose to cooperate.
+      As previously described, some cooperative network robot systems may
+        have explicit methods of cooperation by which cooperative behaviors
+        are innately inherited.
+      Nodes in an explicitly cooperative system are not capable of declining
+        their assistance or sharing their resources.
+      In general, biological systems do not operate in that manner and inter
+        agent cooperation is only accept when both parties gain something.
+      A general framework should provide the necessary communication
+        and underlying mechanism to implement either methods of cooperation.
+    %%% }}}
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    \subsection{Learning}
+    %%% {{{
+
+      Explicitly defining or fine tuning all required parameters for cooperative
+        behaviors is rather time consuming.
+      Instead, the system should have a mechanism that allows it to learn the
+        correct parameters.
+    %%% }}}
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    \subsection{Service Discovery}
+    %%% {{{
+      Service discovery is essential for true network robot system cooperation
+        that follows the agent-based model.
+      Each agent in a system should determine what services are necessary 
+        in order to finished the desired task.
+      If the agent does not encompass the required service, it should contract
+        other agents who have the available service.
+      However, the agent must first find suitable cooperative agents using service 
+        discovery and then contract their help.
+      Service discovery can be accomplished using different methods.
+      Section \ref{sec:middlewares} described a few middleware that utilized a 
+        lower-level middleware which provided service discovery.
+    %%% }}}
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    \subsection{Task Sharing and Allocation}
+    %%% {{{
+      Cooperative behavior can include those in which a robot node determines 
+        that a task needs to be decomposed into smaller tasks and distributed 
+        to other robot nodes in order to successfully accomplish the original 
+        task requirements.
+      It may also be necessary for a node to share its task with others.
+      A mechanism is necessary to allow a task to be shared or distributed
+        amount robot nodes.
+      One option is to have the task sharing and distribution mechanism be 
+        implemented in the communication structure.
+      %However, it may be necessary to have task functionality such as 
+      %  decomposition be 
+    %%% }}}
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+  %%% }}}
+  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+  \section{Cooperative Control Methodologies}
+  %%% {{{
+
+     Network robot system cooperation may be implemented in many different ways.
+     The default method includes explicit engineered cooperation where the
+       cooperative behaviors have been directly programmed into the robots themselves.
+     Other methods follow biological parallels, game-theoretic justifications,
+       and concepts of emergence \cite{Cao1997}.
+   
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    \subsection{Market-Based Cooperation}
+    %%% {{{
+
+      Market-based approaches to cooperation should provide improved team 
+        efficiency through individual profit maximization \cite{Dias2006}.
+      The use of market-based approaches requires a communication mechanism that 
+        supports market-based mechanisms such as auctions and the cost or 
+        utility function for a given auction request.
+      The cost or utility function is application specific and defined by the 
+        system implementer.
+    %%% }}}
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    \subsection{Biological Inspired Cooperation}
+    %%% {{{
+
+      Biological methods for network robot system cooperation have been
+        inspired by many eusocial insects with collective behaviors such as
+        ants and bees \cite{Cao1997}.
+      These methods generally focus from the bottom-up by providing agents
+        that follow simple rules and are highly reactive and follow swarm
+         methods \cite{Parker2009,Dudek1993}.
+      Other biological methods include of artificial immune systems \cite{Khan2008}.
+    %%% }}}
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+  %%% }}}
+  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+  \section{Survey of Existing Cooperative Architectures}
+  %%% {{{
+
+    There has been a lot of research down towards developing robot 
+      architectures that integrate cooperative mechanisms 
+      \cite{Noreils1993,Fukuda1989,Asama1989,Beni1989,Parker1998,Parker1994,Caloud1990}.
+
+    One of the most notable architectures with multiple verification experiments
+      is ALLIANCE \cite{Parker1998,Parker1994}.
+    ALLIANCE is a behavioral based architecture that utilizes motivational
+      behaviors as the primary mechanism for achieving adaptive action 
+      selection.
+    During a mission, the motivational behaviors receive input from multiple
+      sources including robot-to-robot communication, sensory systems,
+      internal motivational components, and inhibitory and excitory feedback 
+      from other behavioral elements.
+    All of the inputs are combined which define the activation level of
+      corresponding behaviors.
+    Therefore, in general, all robots in a given team have the same motivational
+      sets but are assigned with different motivational arbitration values.
+    If a robot in the groups is not succeeding in accomplishing its given task,
+      another robot in the group may be emotionally inclined or motivated
+      to change its task in order to fulfill the requirements of the group
+      as a whole.
+    Experimental verification of the ALLIANCE architecture was accomplished 
+      using multi-target observation \cite{Parker1999}.
+    The L-ALLIANCE architecture is an learning enhanced version of the 
+      ALLIANCE architecture \cite{Parker1996}.
+    The learning mechanism is a monitoring system that modifies motivational
+      parameters.
+    The system requires a learning period in order for it to become familiar 
+      with themselves and their teammates.
+
+    The GOFER architecture focused on studying distributed problems using
+      traditional AI techniques \cite{Caloud1990}.
+    GOFER has a centralized planner including task planning and task allocation. 
+    Each robot communicates with a central task planning and scheduling system (CTPS).
+    Each individual robot does its own motion planning using the A* search 
+      algorithm \cite{AI} which is a best-first graph heuristic search algorithm
+      that finds the least-cost path from one node to another.
+    Behaviors are used for collision avoidance and staying on the path within 
+      lane boundaries and are accomplished using potential field techniques.
+    Petri nets are used for system execution.
+
+    CEBOT (CEllular roBOTics System) is an autonomous decentralized coordinated 
+      system capable of carrying out tasks by creating the optimal structure 
+      and constructing it by itself \cite{Fukuda1989}.
+    It uses a fine-level hierarchical system structure including a task planning, 
+      structure planing, coordination, mobile cell, and cell level.
+    The system constructed by autonomous components called cells or modules
+      which can dynamically reconfigure their overall structure.
+
+    SWARM is a distributed system formed by a large number of autonomous
+      robotic units designed for reliability, self-organization, and 
+      self-repair \cite{Beni1989}.
+    The SWARM robotic units are autonomous with no centralized controller,
+      no shared memory and no synchronous clock.
+    SWARM is an expansion from cellular robotic systems and can accomplish three 
+      types of general tasks: matter processing e.g. assembly, communication 
+      e.g.  sensing and displaying, and information processing e.g. computing.
+
+    The ACTRESS (ACTor-based Robot and Equipment Synthetic System) utilized
+      is explicitly programmed cooperative behaviors in which robots broadcast 
+      for assistance when needed and are forced respond to assistance calls
+      \cite{Asama1989}. 
+    ACTRESS has 5 control levels including the control, physical,
+      procedural, knowledge and conceptual level.
+    The agents follow a simple sequential flow chart control scheme.
+    The system was tested in a simulated pox pushing experiment using
+      multiple micromice, simple robots capable of pushing boxes.
+
+    Matari\'{c} proposed a behavior-based architecture that simplifies the 
+      control of a collection of agents by designing coherent goal-driven global
+      behaviors from simple local strategies distributed over a collection of 
+      homogeneous autonomous agents \cite{Mataric1992}.
+    His focuses was on implicit communication through world actions by which 
+      agents affect one another only by means of their observable state and 
+      actions.
+    Each system was programmed using the Behavior Language and discussed 
+      basic distributed collective behaviors based on simplified
+      interactions between robots including collision avoidance, following,
+      dispersion, aggregation, homing and flocking.
+
+    Although many cooperative architectures have been developed, almost all 
+      of them are no longer maintained and supported.
+    Those still under development are not readily available from the Web.
+    Therefore, there is need for a general, rapidly deployable, cooperation
+      capable network robot system framework capable of implementing multiple 
+      types of architectural types.
+    Having such a general network robot system framework would allow researchers 
+      to rapidly implement a \textit{working} network robot system and focus on 
+      higher level research issues.
+    The framework should employ easy on-line architectural component 
+      reconfigurability for quick system modification and testing,
+      and allow for interchangeable use of simulation and real world
+      robots.
+  %%% }}}
+  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+  \section{Multi-Robot System Reconfigurability}
+  %%% {{{
+
+    Most research dealing with network robot system reconfigurabilty either
+      focus on the physical aspect of the system which includes cellular 
+      robotic systems and swarms \cite{Beni2005,Beni1989} or on the task
+      allocation problem \cite{Lerman2006,Gerkey2004}.
+    Other researchers dealing with behavioral systems tend to focus on
+      reconfiguration of behavioral components \cite{Cragg2006}.
+
+    In a distributed multi-robot system (MRS), each robot operates independently 
+      under local sensing and by communicating with neighboring robots. 
+    The problem of task allocation in a distributed MRS is further challenged 
+      because there is no centralized control mechanism available to make task 
+      assignments. 
+    One traditional task allocation approach \cite{Parker1998} in a distributed 
+      MRS relies on intentional coordination, where the robots coordinate their 
+      respective actions through deliberate communications and negotiations. 
+    As the size of the MRS grows, the complexity of the design of intentional 
+      approaches increases due to increased demands in communication bandwidth 
+      and computational abilities of individual robots. 
+    An alternative approach utilizes emergent coordination 
+      \cite{Salemi2001,Bojinov2000,Rus1999},
+      by which individual robots coordinate their actions based on local sensing 
+      information and local interactions with little or no direct communication 
+      or explicit negotiations between robots. 
+    Although the emergent coordination is more scalable and robust, the lack of 
+      a complete view of the world state results in solutions being commonly 
+      sub-optimal, and the predictive analysis of expected system performance is 
+      difficult.
+
+    \subsection{Mobile Agent-Based Architectures}
+
+      To address the challenges of dynamic task allocation and increase the
+        flexibility of control in a network robot system, a software mobile 
+        agent-based framework would be better equipped for task level control 
+        of a group of cooperative autonomously functioning robots (AFR).
+      Mobile agents are software components that are able to move between 
+        different execution environments in a network \cite{Fuggetta}. 
+      In our proposed framework, each robot is controlled by a mobile task agent.
+      The task agent can communicate with a stationary control agent to 
+        get local sensing information. 
+      The framework contains a dynamic knowledge base as a common context 
+        where each mobile agent can gain access to global information, such 
+        as available and allocated tasks. 
+      Mobile agents can also modify the contents of the knowledge base 
+        to update the world state. 
+      The ability of a mobile task agent to retrieve and update 
+        global information overcomes the drawback of emergent coordination 
+        approach. 
+      In addition, the mobility of mobile task agents also provides an opportunity 
+        for a failing robot to transfer its operation to a neighboring 
+        robot via the migration of the mobile task agent. 
+      The migrated mobile task agent then resumes operation in 
+        a neighboring robot resulting in a self-healing system. 
+      The concept of using mobile agents for increasing fault tolerance 
+        has been illustrated in \cite{Cragg2006} using the ALLIANCE architecture 
+        combined with the Grasshopper2 (GH2) mobile agent platform. 
+
+      Researchers have explored the feasibility of using mobile agents for 
+        the control of mobile robots.  
+      For example, VOMAS, a Virtual Operator Multi-Agent System \cite{Hsu2007},
+        is capable of changing its virtual operator which contains the 
+        predefined task designated for a given mobile robot. 
+      However, robot behaviors can only be chosen from a predefined list and
+        new behaviors cannot be dynamically added.
+
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    \subsection{Mobile Agent Systems}
+    %%% {{{
+      Two standards for agent system were developed to promote interoperability:
+        IEEE Foundation for Intelligent Physical Agents (FIPA) \cite{FIPA} and 
+        the Object Management Group's Mobile Agent System Interoperability 
+        Facility (MASIF) \cite{MASIF}.
+      MASIF provides an interface between agent systems and lacks any 
+        inter-agent specific communications.
+      MASIF is also built upon CORBA, discussed in Section 
+        \label{sec:middlewares} which has multiple technical issues and a
+        lack of commercial vendor commitment.
+      The FIPA specifications are based on remote communication services and
+        provides an agent communication language (ACL) designed for intelligent 
+        agent communication.
+ %     Since their inception, FIPA has gained popularity and has become the 
+ %       de-facto standard with the creation of at-least ten FIPA-compliant 
+ %       agent platforms \cite{agent_platforms}.
+      FIPA has gained a lot of ground of MASIF and is generally accepted as the
+        de-facto agent standard.
+
+      Numerous mobile agent systems have been developed due to an increasing 
+        interest in the mobile agent technology 
+      \cite{Baumann,Lange,DWong,Gray,Peinethesis,Peine,Johnansen,jade_website}. 
+      Among all of the mobile agent systems that have been developed over the past 
+        decade, JADE~\cite{jade_website} is the most notable representative and 
+        the one of the few still active.
+      However, developed in Java with a very large footprint, JADE has been 
+        focused towards IT and would require developing specialized modules for 
+        integrating with low-level hardware such as those found on robot systems.
+      Manufacturer provided low-level drivers for mechatronic and robot systems 
+        are typically written in C. 
+      In order to increase open architecture compatibility, it is desirable to use 
+        an agent language that is based on the same language as the low-level 
+        drivers. 
+      Although there are a few agent systems that support C/C++ mobile agents, they 
+        are not compliant with either FIPA or MASIF.
+
+    \subsubsection{Mobile-C}
+
+      Mobile-C \cite{Mobile-C,mobilec_webpage}, is an IEEE FIPA standard compliant 
+        mobile agent 
+        system that was initially implemented as a standalone application with the 
+        primary intention of fitting into applications with networked mechatronic 
+        and embedded systems involving low-level hardware.
+      In order to provide distributed applications with significant code mobility, 
+        a Mobile-C library \cite{Chou2007} was developed that allows Mobile-C to 
+        be embedded into applications to support C/C++ mobile agents.
+      The Mobile-C library is an implementation of the IEEE FIPA compliant mobile 
+        agent system using Ch, an embeddable C/C++ interpreter, as its agent 
+        execution engine \cite{CUJ1,embedch}.
+      Mobile-C agents are structured as C/C++ code wrapped in XML for ease in 
+        portability and flexibility \cite{ChenXML}.
+      An example of a Mobile-C mobile agent is given in Figure \ref{fig:agentcode}.
+      %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+      \begin{figure}%[!ht]
+        \begin{center}
+        \footnotesize{\baselineskip 1em \verbatiminput{code/agent.txt}}
+        \end{center}
+        \caption{An example of a mobile agent.}
+        \label{fig:agentcode}
+      \end{figure}
+      %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+      The Mobile-C library facilitates code mobility in C/C++ programs and the 
+        development of multi-agent systems that can easily interface with a 
+        variety of hardware devices. 
+      The library is designed to allow software agents written in C/C++ to access 
+        low level hardware as well as provide a degree of mobility across 
+        heterogeneous computer systems. 
+      C/C++ was chosen as both the library language and the agent language due to 
+        its wide availability, portability, and flexibility.
+      The architecture used with the Mobile-C library is shown in Figure
+        \ref{fig:mobilec_lib_arch}.
+      %%%%%%%%%%%%%%%%%%%%%%%%%%%%% FIG %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+      \begin{figure}%[!ht]
+      \centerline{\includegraphics[width=3.5in]{figures/mobilec_lib_arch}}
+      \caption{The architecture of the Mobile-C library.}
+      \label{fig:mobilec_lib_arch}
+      \end{figure}
+      %%%%%%%%%%%%%%%%%%%%%%%%%% END FIG %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+      Mobile-C also provides an interface between agent space and binary space.
+      Using the provided API functions, agent space scripts are able to access 
+        data, synchronize, and communicate with code running in binary space, and 
+        vice versa.
+      Agents are also able to communicate and synchronize with each other to 
+        perform complex tasks which require inter-agent coordination.
+      Mobile-C has been successfully used to dynamically deploy new tasks in a 
+        mobile robot system and a workcell with multiple robot manipulators
+        \cite{Nestinger_c2007,mobilec_robot_webpage,Chou2007,mc_khepera}.
+
+      %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+      \subsection{Interfacing Functions in C/C++ Libraries from Agent Space}
+        \label{sec:chsdk}
+      %%% {{{
+        Mobile-C mobile agents are XML wrapped C/C++ code that are executed
+          in the agent execution engine.
+        Mobile-C uses Ch, a C/C++ interpreter as its agent execution engine.
+        The Ch Software Development Kit (SDK) allows for the porting of C libraries
+          and functions into the Ch space, namely the mobile agent space, by 
+          creating Ch packages that bind to the C space libraries and functions 
+          \cite{chsdk}. 
+        To call a C function in a binary C library from agent space, 
+          a wrapper function should be created first. 
+        The wrapper function consists of two parts: a {\it chf} function in Ch space 
+          and a {\it chdl} function in C space. 
+        The chdl functions are compiled into a dynamically loaded library, which is 
+          loaded during the execution of an image manipulation or processing program 
+          or script.
+        The concept behind the Ch wrapper is shown in Figure \ref{FIG:ChSDK} where
+          the function named {\it MoveMotor()} in the binary C library is
+          called by a Ch script or program in the Ch space.
+        \begin{figure}
+        \centerline{\includegraphics[width=4in]{figures/chsdk}}
+        \caption{Concept of Ch SDK with a binary library.}
+        \label{FIG:ChSDK}
+        \end{figure}
+      %%% }}}
+      %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+    %%% }}}
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    \subsection{Key Technical Aspects for Using Mobile Agents}
+    %%% {{{
+      Mobile agents provide a new programming paradigm for agile distributed systems 
+        including network robot systems \cite{Papaioannou2001}.
+      The ability to travel allows mobile agents to exchange computational
+        resources and move necessary computation and control to the system
+        with the desired resources.
+      Mobile agents can be created dynamically at runtime and dispatched to
+        systems to perform tasks with the most updated code and algorithm.
+      Mobility is the answer to the increasing need for flexibility and adaptability
+        of general large-scale distributed systems \cite{Luck}.
+    %%% }}}
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%      \subsubsection{Autonomic Capabilities}
+%        
+%        In 2001, IBM initiated the introduction of autonomic computing into
+%          large-scale computing systems 
+%          \cite{Kephart2003,Ganek2003,IBMAutonomicWhitePaper}.
+%        The autonomic computing concept is an adaption of the human autonomic system 
+%          which is capable of several salient features that offloads the 
+%          computational complexity of the internal body from the brain. 
+%        These features include the bodies capability of self-healing, 
+%           optimization, protection, and configuration.
+%        As such, it was believed that the same concept could be placed into
+%          computing systems allowing for self-governing system components.
+%        Autonomic capabilities are highly desirable especially with
+%          large network robot systems assigned critical mission tasks
+%          and prolonged mission times.
+%        Mobile agents provide a framework for implementing autonomic 
+%          capabilities.
+
+      \subsubsection{Distributed Computing}
+
+        The mobility of mobile agents provides a mechanism for distributed 
+          computing among network robot system nodes when needed.
+        Since network robot systems may be comprised of smaller, resource
+          and computationally limited systems, it would be beneficial to
+          provide distributed computing capabilities when desired.
+        A group of mobile robots may be able to share the target tracking
+          computational load while pursuing the target.
+
+      \subsubsection{Rapid Programmability}
+
+        Since mobile agents can be dynamically created and dispatched at runtime,
+          mobile agent-based network robot systems would innately be rapidly
+          programmable.
+        When ever new code is generated or a robot system needs to be reconfigured,
+          the desired mobile agent can be sent over to the system during
+          run-time with immediate results.
+
+      \subsubsection{Simulation and Real World Environment Interchange}
+
+         Typically, researchers forgo the physical implementation phase of a
+          network robot system due to the cost involved from purchasing the
+          robotic nodes and time required to setup the physical system.
+        Instead, researchers simulate their system in either an in-house generated
+          simulation environment or in an available multi-robot simulation
+          system.
+        Therefore, a good network robot system framework should provide a
+          simulation system with the robot application programming interface (API)
+          as that of a real physical system.
+        Research utilizing a system with the same physical and simulation side
+          API would be able to interchange their code between a virtual
+          and the real world.
+        A mobile agent's mobility provides the necessary mechanism to transfer 
+          the computational code or robot control code from one host to another.
+        This shall provide a means for having the robot control code to learn
+          while in a simulation environment and then migrate to a
+          real world robot.
+        Therefore, researchers with a mobile agent-based network robot system 
+          framework can first test their algorithms in a simulation environment 
+          and then have the mobile agents migrate to robots for real world 
+          experimental verification.
+  %%% }}}
+  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

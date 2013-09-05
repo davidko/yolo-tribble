@@ -1,0 +1,439 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% begin Applications
+\chapter{Mobile-R Application: Planetary Reconnaissance and Structure
+         Deployment}
+
+  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+  \section{Overview}
+  %%% {{{
+    There has been a fundamental shift in remote extraterrestrial planetary 
+      reconnaissance from segregated tier reconnaissance methods to an 
+      integrated multi-tier and multi-agent hierarchical paradigm 
+      \cite{Fink2005}.
+    Future possible robotic missions also include sending multi-robot systems 
+      other planets where they will develop the necessary structures for
+      human inhabitation.
+    The use of a cooperative multi-tier paradigm requires a flexible 
+      architecture that provides mechanisms for resource sharing and mission
+      deployment for the vertical and horizontal integration of all 
+      reconnaissance components.
+    Multi-tier planetary reconnaissance and structural deployment systems may
+      include multiple orbital satellites with optical systems capable of taking 
+      large surface images, aerial unmanned vehicles capable of taking 
+      topographical maps of a desired region for exploration and robot 
+      localization, and multiple ground systems as shown in Figure 
+      \ref{fig:app1}.
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%% FIG %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    \begin{figure}%[!ht]
+    \centerline{\includegraphics[width=5.0in]{figures/app1}}
+       \caption{The distributed network of mobile and stationary intelligent 
+       robotic systems in a planetary environment.}
+       \label{fig:app1}
+    \end{figure}
+    %%%%%%%%%%%%%%%%%%%%%%%%%% END FIG %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    The system also includes management centers that act as the communication
+      hubs and processing centers for robot groups.
+%   It would be inefficient to have all of the robotic systems constantly 
+%     streaming sensor data to all working robots especially in dynamic 
+%     situation where a mobile robot may sporadically enter or leave
+%     communication range by joining different robot teams or groups.
+%   Instead of having each vision system stream visual data, a mobile agent 
+%      carrying the desired visual processing algorithm is sent to the vision 
+%      system and the algorithm is carried out \textit{in-situ}.
+%    The agent can migrate to all nearby vision systems and then return to the 
+%      sending host with the required data, which reduces the overall network 
+%      congestion and decreases power consumption.
+%    A mobile robot can send out an agent to an aerial vehicle and nearby station
+%      or mobile vision systems with optimal path generation and location 
+%      algorithms.
+  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+  %%% }}}
+  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+  \section{Experimental Framework}
+  %%% {{{
+
+    A depiction of a simple experimental scenario for planetary reconnaissance
+      is shown in Figure \ref{fig:overview}.
+    The main experimental objective is to have a mobile robot with specialized 
+      equipment locate and take mineral samples of desirable rocks.
+    However, the sensor information of the mobile robot is limited and the 
+      mobile robot is incapable of locating a desirable target on its own.
+    The mobile robot will utilize the visual system of a manipulator robot 
+      exploring the same area and the visual system of an aerial robot taking 
+      topological images in order to choose and localize acceptable rocks for 
+      sampling.
+%    The main purpose of this case study is not on the actual algorithms used to 
+%      implement object detection or path planning but to show how mobile agents 
+%      can be utilized to integrate information obtained from distributed vision 
+%      systems.
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%% FIG %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    \begin{figure}%[!ht]
+    \centerline{\includegraphics[width=3.5in]{figures/ProjectOverview}}
+       \caption{An experimental scenario for multi-robot system control
+         in tier-scalable planetary reconnaissance.}
+       \label{fig:overview}
+    \end{figure}
+    %%%%%%%%%%%%%%%%%%%%%%%%%% END FIG %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    The aerial view is too coarse to detect desirable rocks, but is ideal for 
+      optimal path planning.
+    The view from the manipulator robot, on the other hand, provides enough 
+      resolution to deduce which rocks would make superb targets for sampling, 
+      but is too low to the ground for optimal path planning.
+    Ideal rock targets for sampling can be detected using specific sensors 
+      that can detect certain radio active isotopes, optimum rock geometry, or 
+      remotely chosen by human operators.
+
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%% FIG %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    \begin{figure}%[!ht]
+    \centerline{\includegraphics[width=5.0in]{figures/labsetup}}
+       \caption{An experimental setup.}
+       \label{fig:labsetup}
+    \end{figure}
+    %%%%%%%%%%%%%%%%%%%%%%%%%% END FIG %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    The laboratory setup to simulate the environment is shown in Figure
+      \ref{fig:labsetup}.
+    The visual systems, mobile robots, and field objects are highlighted.
+    A K-Team Khepera III robot is used as the mobile robot, a Puma 560
+      with an attached Logitech QuickCam Pro 9000 simulates the mobile
+      manipulator, and a Watec LCL-902K B/W camera mounted above with
+      a wide field-of-view lens is used to simulate the visual system
+      of an aerial robot.
+    Small Dixie cups are used as field objects with one cup colored red 
+      to signify the target.
+  %%% }}}
+  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+  \section{Field Objects Detection Algorithm}
+  %%% {{{
+    The detection of the field objects is highly dependent on the environmental 
+      conditions and the geometrical configuration of the objects that need to 
+      be detected.
+    In general, some aspects of the objects are used to distinguish them from 
+      the background along with specifying certain assumptions of the scene.
+    The field objects consist of only the cups. 
+    Figure \ref{fig:contours} shows the aerial and manipulator views of the 
+      field objects.
+    The field object detection algorithm looks for the bright contrasting 
+      regions differentiating the tops of the cups with the rest of the 
+      environment.
+    The algorithm runs a contour locating algorithm to determine the locations 
+      relating to the top of the cups.
+
+    \begin{table}
+    \caption{Procedures for the $FindFieldObjects$ algorithm.}
+    \label{tab:findfieldobjects}
+    \begin{center}
+    \begin{tabular}{|l|}
+    \hline
+    1: $image\gets cvQueryFrame(...)$ \\
+    2: $cvSmooth(image,...)$ \\
+    3: $cvThreshold(image,...)$ \\
+    4: $cvSmooth(image,...)$ \\
+    5: $nContours\gets cvFindContours(image,contours,...)$ \\
+    6: \textbf{for} $i=0,1,...,nContours$ \textbf{do} \\
+    7: $fieldObjects[i]\gets cvBoundingRect(contours,0)$ \\
+    8: \textbf{end for}\\
+    \hline
+    \end{tabular}
+    \end{center}
+    \end{table}
+
+    For both views, the algorithm procedures are as follows:
+    \begin{enumerate}
+      \item grab an image frame
+      \item smooth the image to increase the region encompassing
+         the tops of the cups
+      \item threshold the image given a specified range of 
+         luminosity
+      \item smooth the image again
+      \item run a contour locating algorithm 
+      \item find the centers of the contours and store them
+    \end{enumerate}
+    The smoothing, thresholding, and contour locating are accomplished using 
+      available Ch OpenCV functions.
+    The \textit{FindFieldObjects} procedures in Table \ref{tab:findfieldobjects}
+      is used for the aerial and manipulator views in Figures \ref{fig:topview}
+      and \ref{fig:sideview}, respectively.
+
+    \begin{figure}%[!ht]
+    \begin{center}
+    \subfigure [An aerial view.]
+      {\includegraphics[width=4.0in]{figures/topviewobjects}
+        \label{fig:topview}}
+    \subfigure [A mobile manipulator view.]
+      {\includegraphics[width=4.0in]{figures/sideviewobjects}
+        \label{fig:sideview}}
+    \caption{Detected field objects are shown encompassed in a black 
+             rectangular box with a black dot depicting the center of the 
+             rectangular region.}
+    \label{fig:contours}
+    \end{center}
+    \end{figure}
+  %%% }}}
+  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+  \section{Target Detection Algorithm}
+  %%% {{{
+    Target detection can only be accomplished using the visual system of the 
+      manipulator because it is the only available color camera and the aerial 
+      view is assumed to be too high to distinguish desirable target 
+      characteristics.
+    The target detection algorithm determines the desirable target by taking 
+      into account that the target is colored red and subtracting individual 
+      color channels as shown in Figure \ref{fig:operation}.
+    Taking into account that the target is colored red,
+     the target detection algorithm applies a channel color
+     the target detection algorithm procedures are as follows:
+    \begin{enumerate}
+     \item split the input image into its red, green, and blue
+        components
+     \item apply channel subtraction between the red and green, and
+     the red and blue channels
+     \item channel sum the created subtraction images
+     \item apply a threshold with a specified range of luminosity
+     \item smooth the image
+     \item apply a contour locating algorithm
+     \item find the center of the contours
+    \end{enumerate}
+    The color component channel subtractions and summation is
+      shown in Figure \ref{fig:operation}.
+    The found target is shown in Figure \ref{fig:target}.
+
+    \begin{figure}%[!ht]
+    \begin{center}
+    %\subfigure [Red channel subtract green channel.]
+    %  {\includegraphics[width=2.5in]{figures/sideviewredblue}}
+    %\subfigure [Red channel subtract blue channel.]
+    %  {\includegraphics[width=2.5in]{figures/sideviewredgreen}}
+    %\subfigure [Summation of the two subtractions.]
+    %  {\includegraphics[width=2.5in]{figures/sideviewsum}}
+    \centerline{\includegraphics[width=4.0in]{figures/sideviewsum}}
+    %\caption{Manipulator view color channel subtraction and summation operations.}
+    \caption{The summation of the two subtractions.}
+    \label{fig:operation}
+    \end{center}
+    \end{figure}
+
+    \begin{figure}%[!ht]
+    \begin{center}
+    \includegraphics[width=4.0in]{figures/sideviewtarget2}
+    \caption{Finding the target along with detected field objects.}
+    \label{fig:target}
+    \end{center}
+    \end{figure}
+
+  \section{Multi-View Target Synchronization Algorithm}
+
+    In order to deduce which field object in both the aerial and
+      the manipulator views correlate with the target, a target
+      correlation algorithm is used to determine which field 
+      object was the target in the manipulator view and a 
+      synchronization algorithm is used to correlate the target 
+      manipulator view field object with the field objects of the 
+      aerial view.
+    This required the assumption of no possible object occlusion.
+
+    The target correlation algorithm utilizes the rectangular
+      regions found from the field object and target detection
+      algorithm.
+    It is assumed that the center of a target object's rectangular
+      region will lie within the left and right extents of the
+      correlating field object's rectangular region and that
+      the target object's rectangular region center will be 
+      below that of the correlating field object's center.
+    The procedures for the target correlation algorithm are given in 
+      Table \ref{tab:targetcorrelation}.
+    The algorithm goes through all of the found targets and
+      compares each one with all of the found field objects.
+    The algorithm first determines if the target object's 
+      rectangular region center lies within the left and
+      right extents of the field object's rectangular center
+      and whether or not the target object is visually below the 
+      field object.
+    The final test determines which field object is vertically
+      closest to the target object by calculating their vertical
+      distance.
+    The field object with the smallest vertical distance is
+      set at the target.
+    The index of the field object is stored in an array for later 
+      use.
+
+%    \begin{algorithm}[th]
+%    \caption{The target correlation algorithm.}
+%    \label{alg:target}
+
+    %\begin{figure}%[!ht]
+    \begin{table}
+    \caption{The procedures for the target correlation algorithm.}
+    \label{tab:targetcorrelation}
+    \begin{center}
+    \begin{tabular}{|l|}
+    \hline
+%    \begin{algorithmic}[1]
+    1: /* Input:\\
+    2: \hspace{2em}\textbf{FOBjs} - field object rectangular regions\\
+    3: \hspace{2em}\textbf{TOBjs} - target object rectangular regions\\
+    4: Output:\\
+    5: \hspace{2em}\textbf{CT} - field object index for each target object */\\
+    6: \textbf{procedure} [\textbf{CT}] = correlateTargets(\textbf{FObjs}, \textbf{TObjs})\\
+    7: \hspace{.5em} initialize {\bf CT} // set it to zero\\
+    8: \hspace{.5em} initialize minimum  // set it to a large positive value\\
+    9: \hspace{.5em} \textbf{for} TObj in \textbf{TObjs}\\
+    10: \hspace{1em} \textbf{for} FObj in \textbf{FObjs}\\
+    11: \hspace{1.5em} lside$\gets$TObj.x\\
+    12: \hspace{1.5em} rside$\gets$TObj.x + (TObj.width)/2\\
+    13: \hspace{1.5em} objcenter$\gets$FObj.x + (FObj.width)/2\\
+    14: \hspace{1.5em} \textbf{if} (lside $\leq$ objcenter $\leq$ rside) \textbf{AND} (FObj.y $<$ TObj.y)\\
+    15: \hspace{2em} \textbf{if} (TObj.y - FObj.y) $<$ minimum\\
+    16: \hspace{2.5em} minimum$\gets$TObj.y - FObj.y\\
+    17: \hspace{2.5em} \textbf{CT}$\gets$FObj.index\\
+    18: \hspace{2em} \textbf{endif}\\
+    19: \hspace{1.5em} \textbf{endif}\\
+    20: \hspace{1em} \textbf{endfor}\\
+    21: \hspace{.5em} \textbf{endfor}\\
+    \hline
+    \end{tabular}
+    \end{center}
+    \end{table}
+%    \end{algorithmic}
+%    \caption{The target correlation algorithm.}
+%    \label{alg:target}
+    %\end{figure}
+%    \end{algorithm}
+
+    First, a search for an overlap of the regions encompassed by 
+      the target detection algorithm and those of the field object 
+      detection algorithm was done to correlate the target with
+      a specific field object.
+    Rectangular bounding regions were used to simplify search 
+      overlapping contoured regions.
+    The rectangular bounding regions of both the field objects
+      and target as seen in the manipulator view are shown in
+      Figure \ref{fig:target}.
+    A simple comparison of the rectangular bounding frames was
+      done using the following statement:
+
+    Lastly, a synchronization algorithm is used to correlate the 
+      manipulator target field object with the field objects of
+      the aerial view.
+    Synchronization of the separate views is rather complex due
+      to the skewed nature of the manipulator view.
+    Assuming that a planetary or localized GPS system has been 
+      set up, the orientation of the mobile manipulator robot
+      relative to the aerial robot should be known.
+    Given the orientation, the manipulator view can be rotated 
+      to more closely align it with a North, East, South, or
+      West bearing.
+    From there, a vertical scan can be used to first sort the
+      manipulator view found field objects using their respective 
+      center pixel points.
+    A second sort is then applied using the horizontal position
+      of their respective center pixel points.
+    The same technique is applied to the aerial view based on
+      the orientation of the manipulator robot.
+    Once completed, the sorted aerial field object array should
+      coincide with the manipulator field object array.
+    It is then a trivial task to correlate the targeted object
+      from the manipulator view with the aerial view.
+  %%% }}}
+  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+  \section{Path Planning Using the Genetic Algorithm}
+  %%% {{{
+    Although any path planning algorithm can be used, a genetic
+      implementation was chosen due to its innate nature of 
+      finding multiple solutions.
+    The genetic algorithm package, described in Section \ref{sec:packages}, is 
+      used to generate a path for the mobile robot.
+    The genetic algorithm follows the same implementation as was done in 
+      \cite{Tu2003}.
+    The aerial image was subdivide into zones of 10 x 10 pixels and stored 
+      internally as a two dimensional array.
+    If a field object encompassed part of a zone, that zone was deemed blocked 
+      and noted as a 1 in the two dimensional array.
+    Field object locations were found via the field object detection algorithm 
+      discussed in the previous section, which provided the center location and 
+      bounding rectangular region of each object.
+    The radius of the robot is added to the field object bounding rectangular 
+      region which reduces the complexity of the path planning problem by 
+      allowing the a singularity approximation of the mobile robot.
+
+    \begin{figure}%[!ht]
+    \begin{center}
+    \includegraphics[width=2.5in]{figures/direncode}
+    \caption{Direction encoding as used in reference \cite{Tu2003}.}
+    \label{fig:direncode}
+    \end{center}
+    \end{figure}
+
+    Each chromosome contains $2*(n+m)=2*(64+48)=224$ genes as suggested in 
+      \cite{Tu2003} given that the 640x480 pixelized image was broken into 
+      64x48 zones.
+    The genes contain 4 bits and define the direction the mobile robot should 
+      move from its current position.
+    The direction encoding scheme is shown in Figure \ref{fig:direncode}.
+
+    The genetic algorithm was run using a population size of 2000 with 100 
+      evolutionary cycles.
+    A multi-point mutation and allele crossover mixing were used with a 
+      crossover rate of 0.9, mutation rate of 0.02 and migration rate of 0.
+    Population entity selection for migration and mutation were accomplished 
+      using a select one best of 2 approach.
+    Crossover entity selection was accomplished using a two best of 2 approach.
+    The genetic algorithm path planning output is shown in Figure 
+    \ref{fig:path}.
+    \begin{figure}%[!ht]
+    \begin{center}
+    \includegraphics[width=3.5in]{figures/PathFound}
+    \caption{Finding a path using the genetic algorithm.}
+    \label{fig:path}
+    \end{center}
+    \end{figure}
+  %%% }}}
+  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+  \section{Experiment}
+  %%% {{{
+    The experiment initiates with the Khepera III mobile robot approaching the 
+      designated area of rock sampling.
+    The Khepera III mobile robot is running a Mobile-C agency and is under the 
+      control of a mobile agent with the objectives of searching for and 
+      sampling proper rocks.
+    The mobile agent migrates itself to the mobile manipulator robot where it 
+      utilizes the available Ch OpenCV commands and runs through the field and 
+      target object detection algorithms.
+    From there, it migrates to the overhead aerial robot with the field and 
+      object data obtained from the mobile manipulator robot, runs the field 
+      object detection algorithm on the aerial view and synchronizes the images 
+      to locate the target.
+    The mobile agent then populates a binary map of the area where objects are 
+      defined as being 1 and the other areas as being 0.
+    Afterward, the mobile agent runs the genetic path planning algorithm using 
+      the genetic algorithm package producing way points for the Khepera III mobile robot.
+    Finally, the mobile agent migrates back to the Khepera III mobile robot with
+      the way-points for the path.
+    A full code listing of the mobile agent used is available from the Web at 
+      \cite{mobilec_vision_webpage}.
+
+    It was found that the determination of a satisfactory path was dependent on
+      the gene seed and population size used.
+    Small population sizes were incapable of producing a path ending at the 
+      desired target which is mainly due to the method of seeding the 
+      population.
+    Generally, each chromosome of the population is first seeded with a 
+      randomized gene selection.
+    However, some of the populated chromosomes did not provide an appropriate 
+      path or a useful population entity.
+    A better approach would be to still utilize random gene selection but only 
+      populate the world with chromosomes that provide a viable path.
+  %%% }}}
+  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

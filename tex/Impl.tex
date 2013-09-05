@@ -1,0 +1,1048 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% begin Implementation
+
+\chapter{Implementation Details of the Mobile-R System}
+
+  The general mobile agent-based network robot system, Mobile-R, discussed in 
+    the previous section, has been implemented during the course of this 
+    research project.
+  Mobile-R is a highly extensible and reconfigurable middleware system that 
+    follows the multi-agent standards of the IEEE Foundation for Intelligent 
+    Physical Agents (FIPA).
+  It allows for the implementation of architectures popularly used in the 
+    different multi-robot paradigms and is based on widely accepted standards 
+    for multi-agent interaction allowing for interoperability with other 
+    multi-agent systems.
+  Using mobile agents provides innate fault-tolerance by using the mobile agents
+    ability to migrate to different hosts.
+  Mobile-R contains all of the salient features of an ideal middleware.
+  The system is based on standard programming language and provides a simple 
+    interface for extending functionality with reduces the computational and 
+    programing efforts and the learning curve required to get started with it.
+  Since Mobile-R is based on C/C++, the system can easily be extended and 
+    existing C/C++ based software can quickly be integrated into the system.
+  Mobile agents provide a mechanism for rapid reprogrammability of a system and 
+    transition capabilities between virtual robots in a simulated environment 
+    and and real-world physical systems.
+  The following sections describe the component implementation details of the 
+    Mobile-R system.
+
+  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+  \section{Agent Structures} \label{sec:impl_agent}
+  %%% {{{
+    In order to enhance modularity and ease of reconfigurability, the agents are
+      implemented using C++ class objects.
+    All of the classes share common procedures and continuously check for 
+      communication messages.
+
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    \subsection{Deliberative Agents}
+    %%% {{{
+      Figure \ref{fig:deliberativeprocedures} shows the generalized procedures
+        for the Deliberative Agent.
+      When the Deliberative Agent is initiated, it first initializes the FIPA
+        communication module which handles all of the necessary content
+        parsing with all ACL messages.
+      Afterward, the Deliberative Agent attempts to gain control of the
+        Hardware Agent by sending a FIPA ACL message.
+      If the Hardware Agent refuses, the Deliberative Agent exits.
+      Otherwise, the Deliberative Agent may or may not request that data be 
+        sent to it from the Hardware Agent when available.
+      Next, it then attempts to gain control of the Reactive Agent.
+      Once it does, it sets up the required Reactive Agent arbitration scheme 
+        and falls into a wait-for-a-message and execute infinite loop.
+      In the loop, the Deliberative Agent checks for messages using the FIPA
+        module.
+      After all messages have been dealt with, the Deliberative Agent goes
+        through its execution system.
+      Once done, it goes back and stars the loop over again.
+      %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+      \begin{figure}%[!ht]
+      \centerline{
+        \subfigure[The main procedures.]{
+          \includegraphics[width=2.5in]{figures/DeliberativeAgentProcedures}}
+        \subfigure[The executive control procedures.]{
+          \includegraphics[width=2.5in]{figures/ExecutiveControlProcedures}
+          \label{fig:deliberativeprocedures-b}}
+      }
+      \caption{The Deliberative Agent procedures.}
+      \label{fig:deliberativeprocedures}
+      \end{figure}
+      %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+      The executive control procedures for the Deliberative Agent is shown in
+        Figure \ref{fig:deliberativeprocedures-b}.
+      The executive control procedures begins by updating the internal self 
+        model and world model using the sensor data.
+      It then updates the emotional state of the system and enters into the
+        deliberation-planning state.
+      In this state, the system goes back and forth between the deliberation
+        and planning modules to decide the appropriate actions to take.
+      Emotions may play a role in determining how long the system remains in
+        the deliberation state.
+      Once an action has been decided, the system outputs the desired actions
+        and stores all of the new data into the internal database and continues
+        with the main loop.
+      The internal knowledge base is implemented using SQL databases.
+      The access to the database in Mobile-C is provided through the use of the
+        Ch SQLite package \cite{ChSQLite} which is a Ch binding to the SQLite C
+        library \cite{SQLite}.
+      An example of a Deliberative Agent mobile agent code is provided in Appendix 
+        \ref{appendix:mobileagents}.
+    %%% }}}
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    \subsection{Task Agents}
+    %%% {{{
+      The complexity of the task agents is highly application dependent.
+      In general, task agents carry the necessary procedures that are necessary
+        to complete a given task.
+      For example, if a robot is given a task to search for specific objects
+        but does not have an on-board visions system, the robot can collaborate
+        with other robots, which mostly do not have the necessary task specific
+        procedures, by sending the procedures using a task agent.
+    %%% }}}
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    \subsection{Reactive Agents}
+    %%% {{{
+      Figure \ref{fig:reactiveprocedures} shows the generalized procedures
+        for the Reactive Agent.
+      Just like the Deliberative Agent, when the Reactive Agent is initiated,
+        it first initializes the FIPA communication module which handles all of 
+        the necessary content parsing with all ACL messages.
+      It then requests for control of the Hardware Agent.
+      If denied, the Reactive Agent exits.
+      Otherwise, it requests that data be sent from the Hardware Agent when
+        available and sets up the desired Hardware Agent update frequency.
+      Then then enters into a message parsing loop and waits for a FIPA ACL
+        message to arrive.
+      When a message arrives, the message is handled by a FIPA message handler.
+      If the message contains new data from the Hardware Agent, the new data
+        is propagated through the behavioral system.
+      Output of the behavioral system is then sent to the Hardware Agent.
+      Afterward, the system goes back to waiting for FIPA messages.
+      The behavioral propagation is relatively straight forward.
+      The new sensor data is first propagated through the motivations of the
+        system.
+      The output of the motivations determine which composite behaviors are
+        excited and the sensor data is propagated through the composite 
+        behaviors.
+      The output of the composite behaviors indicate which behaviors will be 
+        engaged.
+      Finally, the sensor data is propagated throughout the activated behaviors, 
+        their outputs are summed up and sent to the Hardware Agent.
+      An example of a Reactive Agent mobile agent code is provided in Appendix 
+        \ref{appendix:mobileagents}.
+      %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+      \begin{figure}%[!ht]
+      \centerline{
+        \subfigure[The main procedures.]{
+          \includegraphics[width=2.5in]{figures/ReactiveAgentProcedures}}
+        \subfigure[The executive control procedures.]{
+          \includegraphics[width=2.5in]{figures/BehavioralOutputProcedures}}
+      }
+      \caption{The Reactive Agent procedures.}
+      \label{fig:reactiveprocedures}
+      \end{figure}
+      %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+ 
+      %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+      \subsubsection{Behavioral Components}
+      %%% {{{
+        The behavioral components can be entered into the system as either 
+          standard C function calls, which provide unlimited behavioral 
+          types, or as behavioral objects, which are either class or structures 
+          with the required behavior information.
+        The behavioral functional implementation is more versatile and flexible 
+          to application needs.
+        The behavioral functions have the function prototype provided below.\\
+        \indent
+        {\footnotesize
+          \textbf{void} BHComponent\_func(\textbf{struct} inData*, 
+              \textbf{struct} outData*);
+        }
+
+        \noindent
+        The \textit{inData} structure contains the necessary information 
+          including a pointer to the actual data and the size of the memory
+          allocated for the data.
+        The \textit{outData} structures follows the same implementation of
+          the \textit{inData} in that it too contains a pointer to the data
+          memory address and the extent of the allocated memory.
+        The dimensions of the allocated memory for the \textit{outData}
+          structure generally complies with the number of physical actuators
+          on the robot while the dimensions of the \textit{inData} depend
+          on which sensors are used by the behavioral component.
+      %%% }}}
+      %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+      %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+      \subsubsection{Behaviors} \label{sec:imp_behaviors}
+      %%% {{{
+        One method of implementing behaviors in Mobile-R is based on the
+          Braitenberg algorithm \cite{Braitenberg}. 
+        Common behaviors implemented using the Braitenberg approach includes 
+          collision avoidance, object following and wall following.
+        The Braitenberg algorithm can be formulated as
+        \begin{equation}
+          \mathbf{M} = \mathbf{W}\mathbf{S}+\mathbf{A}
+          \label{eqn:behavior}
+        \end{equation}
+          where $\mathbf{M}$ is the desired motor output array, $\mathbf{W}$ is 
+          the motor-to-sensor weights array, $\mathbf{S}$ is the sensor data 
+          array corresponding to the IR sensors and $\mathbf{A}$ is the speed 
+          adjustment array.
+        Therefore, the \textit{inData} encompasses the required sensor data
+          array, $\mathbf{S}$, while \textit{outData} encompasses the
+          allocated memory for the desired motor output array, $\mathbf{M}$.
+        More information pertaining to specific robot implementation of 
+          Braitenberg behaviors is given in Section \ref{sec:val_behavior}.
+      %%% }}}
+      %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+      %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+      \subsubsection{Motivations and Composite Behaviors}
+      %%% {{{
+        Motivations and composite behaviors will take in sensor data and output 
+          the desired inhibitor and excitation signals to be applied to other 
+          behavioral components.
+        Therefore, the \textit{outData} for motivations and composite behaviors
+          encompass an array where each index refers to a lower level
+          component and the value at that index is the activation level for
+          that component.
+        Since motivations and composite behaviors act on higher behavioral
+          levels, they may also utilize data from other robots to decide the 
+          total emergent behavior of the system.
+      %%% }}}
+      %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+        %%% EXAMPLE CODE FOR BEHAVIOR, COMPOSITE AND MOTIVATION
+
+      %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%      \subsection{Reactive Agent Control Loop}
+      %%% {{{
+%        Once started, the Reactive Agent will enter into a reactive control loop
+%          with a default interval of 50ms.
+%        During each loop, the control agent acquires new sensor data, the 
+%          $\mathbf{S}$ matrix from Equation \ref{eqn:behavior}, passes the sensor 
+%          data to each behavioral component, and sums the motor outputs of all of 
+%          the lower-level behaviors before setting the required motor signals.
+%        The pseudo reactive control algorithm is given in Figure \ref{alg:control}.
+%        Each behavior is a function that takes in the new sensor matrix and returns 
+%          a motor output data array for that specific behavior functionality.
+%
+%        \begin{figure}%[!ht]
+%        {
+%        \baselineskip 1em
+%        \begin{algorithmic}[1]
+%        \STATE \hspace{0.0em} /* Input: 
+%        \STATE \hspace{0.0em} \hspace{2em}\textbf{Behaviors} - array of behavior functions */
+%        \STATE \hspace{0.0em} \textbf{procedure} reactiveControlLoop(\textbf{Behaviors})
+%        \STATE \hspace{0.5em} initialize {\bf M} // set it to zero
+%        \STATE \hspace{0.5em} initialize {\bf S} // set it to zero
+%        \STATE \hspace{0.5em} \textbf{while}(1)
+%        \STATE \hspace{1.0em} \textbf{S} = getNewSensorData()
+%        \STATE \hspace{1.0em} \textbf{for} behavior in \textbf{Behaviors}
+%        \STATE \hspace{1.5em} \textbf{M} += behavior(\textbf{S})
+%        \STATE \hspace{1.0em} \textbf{endfor}
+%        \STATE \hspace{1.0em} setNewMotorSignals(\textbf{M})
+%        \STATE \hspace{1.0em} sleep(50ms)
+%        \STATE \hspace{0.5em} \textbf{endwhile}
+%        \end{algorithmic}
+%        }
+%        \caption{The pseudo reactive control algorithm.}
+%        \label{alg:control}
+%        \end{figure}
+      %%% }}}
+%      %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    %%% }}}
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    \subsection{Behavior Agents}
+    %%% {{{
+      Behavior agents are used to either update or install new behaviors onto
+        a system.
+      The behavior agents contain behavioral functions, as previously discussed,
+        and the necessary communication procedures to interact with Reactive
+        Agent.
+      The interaction between the behavior and Reactive Agent is shown in
+        Figure \ref{fig:behavioragent}.
+      %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+      \begin{figure}%[!ht]
+      \centerline{\includegraphics[width=3.0in]{figures/behavioragent}}
+      \caption{Behavior agent interaction with the Reactive Agent.}
+      \label{fig:behavioragent}
+      \end{figure}
+      %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+      When a behavior agent arrives on the system, it sends a message to the 
+        Reactive Agent to inform it that new behaviors are available.
+      The message contains the name of the behavioral functions, types and 
+        location.
+      The new or updated behavioral functions are typically housed within the 
+        behavior agent's agent code as shown in Figure \ref{fig:bacode}.
+      The Reactive Agents takes the new behavioral function information and
+        modifies the internal behavior repertoire accordingly.
+      The new behavioral functions are called during the next behavioral
+        calculation cycle.
+      Updates to the behavioral system are sent to the Deliberative Agent by the 
+        Reactive Agent.
+      %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+      \begin{figure}%[!ht]
+        \begin{center}
+        \footnotesize{\baselineskip 1em \verbatiminput{code/ba.txt}}
+        \end{center}
+        \caption{An example behavior agent C code.}
+        \label{fig:bacode}
+      \end{figure}
+      %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    %%% }}}
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    \subsection{Hardware Agents}
+    %%% {{{
+      The Hardware Agent mainly acts on behalf of the other agents with the main
+        purpose of dealing with the different time scales between the 
+        hardware and agents.
+      The execution procedures for the Hardware Agent is given in Figure
+        \ref{fig:hardwareprocedures}.
+      As with the other major agents, the Hardware Agent first initializes the
+        FIPA communications module and then initializes the physical hardware.
+      Since the Hardware Agent is designed to execute on a variety of devices,
+        it is capable of loading the required device drivers for the system it
+        resides on.
+      Currently, the main approach to hardware abstraction is implemented using
+        a Ch dynamically loadable library which is accessible in the agent space.
+      After the device driver has been loaded and initialized, the Hardware
+        Agent enters a wait-for-message loop and processes any messages that
+        are received.
+      An example of the Hardware Agent mobile agent code is provided in Appendix 
+        \ref{appendix:mobileagents}.
+      %%%%%%%%%%%%%%%%%%%%%%%%%%%% FIGURE %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+      \begin{figure}%[!ht]
+      \centerline{
+        \includegraphics[width=2.5in]{figures/HardwareAgentProcedures}}
+      \caption{The Hardware Agent procedures.}
+      \label{fig:hardwareprocedures}
+      \end{figure}
+      %%%%%%%%%%%%%%%%%%%%%%%%%%% FIGURE %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    %%% }}}
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    \subsection{Device Agents}
+    %%% {{{
+      The device agent acts in the same manner as the behavior agent.
+      Device agents are used to either remove, update, or install hardware
+        module procedures.
+      The device agents contain device functions or services and the necessary 
+         communication procedures to interact with Hardware Agent.
+      The device agent informs the Hardware Agent of services which are then
+        integrated into the Hardware Agent processing procedures.
+    %%% }}}
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    \subsection{Service Discovery Agent}
+    %%% {{{
+      The Mobile-C system has been enhanced with the addition of an Agent 
+        Service Discovery system based on the FIPA preliminary specifications.
+      The modified Mobile-C library architecture is shown in Figure 
+        \ref{fig:mobilec_lib_arch_new}.
+      %%%%%%%%%%%%%%%%%%%%%%%%%%%%% FIG %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+      \begin{figure}%[!ht]
+      \centerline{\includegraphics[width=5.0in]{figures/mobilec_lib_arch-b}}
+      \caption{The modified architecture of the Mobile-C library.}
+      \label{fig:mobilec_lib_arch_new}
+      \end{figure}
+      %%%%%%%%%%%%%%%%%%%%%%%%%% END FIG %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+      Internally, the service discovery agent contains a service hash table in 
+        order to speed up service requests as shown in Figure \ref{fig:sdahash}.
+      The hash table in the service discovery agent closely follows the service
+        hash table designed for the Mobile-C directory facilitator \cite{Chen2005}.
+      %%%%%%%%%%%%%%%%%%%%%%%%%%%%% FIG %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+      \begin{figure}%[!ht]
+      \centerline{\includegraphics[width=6.0in]{figures/service_hash}}
+      \caption{The service discovery hash table and its elements.}
+      \label{fig:sdahash}
+      \end{figure}
+      %%%%%%%%%%%%%%%%%%%%%%%%%%%%% FIG %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+      The service hash table contains 52 elements, $N=51$, allowing for the break 
+        down of possible services into alphanumeric ordering and differentiating 
+        between capitalization.
+      The service discovery agent relies on the use of the service hash table and
+        two other structures: service structure and a robot structure.
+      A service hash table element points to a linked list of service structures 
+        each of which may contain a linked list of robot structures.
+      The robot structures contains a list of information including the address of
+        the system providing the service, the time span in which the service will
+        be available, the service type, required service parameters, etc.
+      The service discovery agent service hash table has been extended compared 
+        to the service hash table of the directory facilitator.
+      The robot structure differentiates between hardware and software services.
+      Therefore, a robot may provide a vision service either indicating the 
+        availability of a software vision service or the physical camera.
+
+      The SDA protocol is shown in Figure \ref{fig:sdaprotocol}.
+      When a robot requires a remote service, it requests its SDA to search for 
+        it.
+      The SDA then broadcasts a request for the specific service to all available
+        SDAs on the network as illustrated in Figure \ref{fig:sdaprot-a}.
+      In Figure \ref{fig:sdaprot-a}, the SDA of robot 1 has sent out a request
+        for a vision service.
+      Robot 2 contains the vision service while robot 3 contains a gripper 
+        service.
+      Robot 2 also contains information about the gripper service of robot 3.
+      Each SDA searches through their service hash table for a matching service.
+      If one is found, the SDA with the service broadcasts the location of the
+        service provider to all SDAs on the network.
+      Figure \ref{fig:sdaprot-b} shows robot 2 broadcasting a reply with the
+        information pertaining to the requested vision service.
+      The robots without the required service do not reply back to the request
+        but listen for replies.
+      When a reply is heard, all SDAs without that specific service in their
+        hash table will add the service information to their hash table.
+      In Figure \ref{fig:sdaprot-c}, robot 1 and 3 have added the vision service
+        information to their hash table.
+      By taking note of all the information sent in the network, no communication 
+        is wasted.
+      If robot 3 ever requires the vision service, it already knows where the 
+        service can be located.
+      Each service has a specific time-out period, after which the service is
+        no longer available.
+      The SDA mobile agent code is provided in Appendix 
+        \ref{appendix:mobileagents}.
+      %The requesting SDA can also specify the search depth in the network 
+      %  indicating whether or not it wants .
+      %%%%%%%%%%%%%%%%%%%%%%%%%%%%% FIG %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+      \begin{figure}%[!ht]
+      \begin{center}
+      \subfigure[Initial SDA request.]
+        {\includegraphics[width=3.5in]{figures/SDA_Protocol-a}
+         \label{fig:sdaprot-a}}
+      \subfigure[Reply to SDA request.]
+        {\includegraphics[width=3.5in]{figures/SDA_Protocol-b}
+         \label{fig:sdaprot-b}}
+      \subfigure[Update SDA hash tables.]
+        {\includegraphics[width=3.5in]{figures/SDA_Protocol-c}
+         \label{fig:sdaprot-c}}
+      \end{center}
+      \caption{The service discovery protocol.}
+      \label{fig:sdaprotocol}
+      \end{figure}
+      %%%%%%%%%%%%%%%%%%%%%%%%%%%%% FIG %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+   
+    %%% }}}
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+  %%% }}}
+  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+  \section{Mobile Agent System}\label{sec:impl_mas}
+  %%% {{{
+    Mobile-C has been enhanced in order to further provide the necessary basic
+      communication structure for proper FIPA ACL protocol implementation.
+    Two new functions have been added to the Mobile-C FIPA ACL communications API:
+      \textit{mc\_AclSetProtocol} and \textit{mc\_AclSetCommunicationID}.
+
+    The function \textit{mc\_AclSetProtocol} allows users to set the protocol
+      type of a message.
+    Protocol types are provided through an enumerated list.
+
+    During the execution time of an agent, the agent may have multiple rounds
+      of communication with another agent, each with a different conversation
+      topic.
+    These conversations may include multiple contract nets.
+    Therefore, in order to distinguish which conversation a message pertains
+      to, the ACL specifications provides the use of a conversation ID.
+    The function \textit{mc\_AclSetConversationID} allows users to set the 
+      specific conversation id of an ACL message which is necessary to allow
+      the instantiation of multiple concurrent protocols.
+
+  %%% }}}
+  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+  \section{FIPA Communication Module}\label{sec:fipa}
+  %%% {{{
+    As discussed in Section \ref{sec:fipa}, FIPA defines multiple types of
+      interaction protocols that are built upon the agent communication
+      language (ACL).
+    Mobile-C agents send and receive ACL message, however, parsing through
+      every type of possible message requires the inclusion of a large amount
+      of extra communication code.
+    Instead, a FIPA communication module was created to handle any possible
+      necessary FIPA communication protocols.
+    %%%%%%%%%%%%%%%%%%%%%%%%%%% FIG %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    \begin{figure}%[!ht]
+    \centerline{\includegraphics[width=3.5in]{figures/FIPAModule}}
+    \caption{FIPA module use by agents.}
+    \label{fig:fipamodule}
+    \end{figure}
+    %%%%%%%%%%%%%%%%%%%%%%%%%%% FIG %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    Before use, the FIPA module must first be initialized to dictate which 
+      FIPA interaction protocols will be used, and the desired actions to be 
+      take with specific message contents as shown in Figure 
+      \ref{fig:fipamodule}.
+    Initialization can be accomplished using a XML file with all the necessary 
+      tags or by passing a FIPA communication structure object.
+    Agents can also assign specific callback functions to each enabled type of
+      FIPA communication protocol.
+
+    Figure \ref{fig:fipamoduleb} shows the internal representation of the
+      FIPA module.
+    The FIPA module breaks communications down into protocols and simple
+      communicative acts.
+    Both sub-components of the FIPA module use a hash table to store 
+      registered communication services.
+    The protocols are implemented using finite state machines and stored based
+      on the specific conversation id.
+    Therefore, multiple contract nets can be employed using individual 
+      conversation ids.
+    The FIPA communicative acts are registered by provided actions which are
+      performed when that specific performative is received.
+    Each action may have multiple tests which are performed on the received 
+      ACL message.
+    These tests may include checking the sender address, sender name, and 
+      other contents of the message for specific values and allows for
+      simple security implementations.
+    %%%%%%%%%%%%%%%%%%%%%%%%%%% FIG %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    \begin{figure}%[!ht]
+    \centerline{\includegraphics[width=6.0in]{figures/FIPAModule-b}}
+    \caption{Internal representation of the FIPA module.}
+    \label{fig:fipamoduleb}
+    \end{figure}
+    %%%%%%%%%%%%%%%%%%%%%%%%%%% FIG %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+  %%% }}}
+  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+  \section{Hardware Device Control}\label{sec:hdc}
+  %%% {{{
+    The low-level device interfaces used by the Hardware Agents are device 
+      dependent and allow the Hardware Agent to control the on-board actuators 
+      and receive feedback from the system sensors.
+    Some robot system manufacturers provide low-level control libraries written 
+      in C/C++.
+    An interface is created to allow the Hardware Agent to directly access the 
+      binary control libraries as discussed in Section \ref{sec:chsdk}.
+    Other robots use custom protocols over a specific communication bus.
+    The following sections discuss the physical and virtual robots currently
+      supported under Mobile-R.
+
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    \subsection{Supported Physical Robot Hardware Abstractions} 
+      \label{sec:supportedrobots}
+    %%% {{{
+      Currently, Mobile-R supports the K-Team Khepera III mobile robot
+        \cite{kteam}, the iRobot Create \cite{GumCreate}, LEGO Mindstorms NXT,
+        an in-house built modular robot, and a robot workcell comprised of 
+        retrofitted robot manipulators 
+        \cite{Nestinger2008,Nestinger_c2007,Nestinger}.
+      All of the supported robots are shown in Figure \ref{fig:robots}.
+      %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+      \begin{figure}%[!ht]
+      \begin{center}
+        \subfigure[iRobot Create with a Gumstix controller.]{
+          \includegraphics[width=2.50in]{figures/gumcreate}}
+        \hspace{0.500in}
+        \subfigure[Modular Robot.]{
+          \includegraphics[width=2.00in]{figures/modularbot}} \\
+        \subfigure[Khepera III mobile robot.]{
+          \includegraphics[width=2.00in]{figures/kh}\label{fig:kh}}
+        \hspace{0.50in}
+        \subfigure[LEGO Mindstorms NXT.]{
+          \includegraphics[width=2.0in]{figures/NXT}}\\ 
+        \subfigure[Retrofitted robot workcell.]{
+          \includegraphics[width=4.0in]{figures/workcell3}}
+      \end{center}
+      \caption{The robots currently supported in Mobile-R.}
+      \label{fig:robots}
+      \end{figure}
+      %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+      \textbf{iRobot Create:} 
+      The iRobot Create is a hobbyist robot based on the Roomba platform 
+        manufactured by iRobot and explicitly designed for robotics 
+        development. 
+      The Create provides a 25 pin port for direct interface with the on-board
+        microcontroller.
+      Due to the limitations of resources on the on-board controller, 
+        additional computation is added and connected to the available 25 pin
+        port interface.
+      The Create is controlled using a Gumstix tinycomputer using an 
+        accompanying Robostix module.
+      A Ch package was created based on the iRobot Create open interface 
+       specifications \cite{create,ielrobots_webpage}.
+
+      \textbf{Modular Robot:} 
+      The modular robot is an in-house designed and fabricated modular robot 
+        system with aims at physical structure reconfigurability.
+      The modular robot system is controlled using two Baby Orangutans from
+        Pololu Inc. \cite{Pololu} as slave controllers for the Gumstix.
+      The electrical schematics for the modular robot is shown in Figure 
+        \ref{fig:modbot}.
+      %%%%%%%%%%%%%%%%%%%%%%%%%%%%% FIG %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+      \begin{figure}%[!ht]
+        \centerline{\includegraphics[width=6.0in]
+            {figures/ModularRobot_Electrical_Schematic}}
+        \caption{Electrical schematics for the modular robot.}
+        \label{fig:modbot}
+      \end{figure}
+      %%%%%%%%%%%%%%%%%%%%%%%%%% END FIG %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+      Each Baby Orangutan controls two motors, take in the quadrature encoder
+        signals, and perform PID control on the motors.
+      The Gumstix communicates with the Baby Orangutans via the I2C bus using a
+        set of communication protocols.
+%      The Ch I2CIO package was created to allow mobile agents running on the Gumstix
+%        to directly communicate with microcontrollers over I2C \cite{ielrobots_webpage}.
+
+      \textbf{K-Team Khepera III:} 
+      The Khepera III mobile robot, shown in Figure \ref{fig:kh}, has a 
+        differential drive system for locomotion and includes 9 infrared sensors 
+        (IR) for object detection and 5 ultrasonic sensors for long range object 
+        detection.
+      The location of IR sensors relative to the bottom view of the Khepera III 
+        mobile robot is shown in Figure \ref{fig:khir}.
+      The Khepera III mobile robot is equipped with the KoreBot board, an ARM 
+        based embedded computer.
+      The KoreBot board has 64 Mbytes of RAM and runs an embedded Linux 
+        operating system.
+      Through the KoreBot board, the Khepera III mobile robot is also able to 
+        host a standard CompactFlash extension card supporting Wi-Fi, Bluetooth, 
+        or extra storage space.
+      The Ch Khepera package was created to allow mobile agents running on Khepera III
+        to directly communication with the robot hardware \cite{ielrobots_webpage}.
+      Therefore, mobile agents can acquire updated sensor data and control the motors.
+      %%%%%%%%%%%%%%%%%%%%%%%%%%%%% FIG %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+      \begin{figure}%[!ht]
+        \centerline{\includegraphics[width=2.5in]{figures/IRSensorLoc}}
+        \caption{Bottom view of the Khepera III IR sensor locations
+          \cite{KheperaIIIUserManual}.}
+        \label{fig:khir}
+      \end{figure}
+      %%%%%%%%%%%%%%%%%%%%%%%%%% END FIG %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+      \textbf{LEGO Mindstorms NXT:} 
+      The LEGO Mindstorms NXT is one of the lines of Lego sets combined with
+        programmable bricks with electric motors, sensors, and Lego pieces.
+      The system is teleoperated over Bluetooth from a host system.
+      The ChNXT package was created to allow for the direct motor control and 
+        sensor data acquisition of the LEGO Mindstors NXT \cite{ielrobots_webpage}.
+
+      \textbf{Robot Workcell:} 
+      The retrofitted robot workcell comprises of Unimation's Puma 560 and IBM's 
+        7575 robotic manipulators and a conveyor system 
+        \cite{Pannuthesis,Hu,Pannu}. 
+      The robotic systems were retrofitted to comply with open architecture
+        requirements.
+      Initially, the retrofitted robot controller consisted of a Delta Tau Data 
+        System's Programmable Multi-Axis Controller (PMAC) board seated in a 
+        VMEbus computer, a Motorola MVME167, and coordinated by Ch running under 
+        the LynxOS real-time operating system from Lynx Real-Time Systems.
+      The robotic cell has since been updated and is now controlled utilizes two 
+        Delta Tau Data System's Turbo PMAC2 PCI controllers \cite{Delta}. 
+      The hardware configuration of the retrofitted workcell is shown in Figure 
+        \ref{fig:robots}
+      The Puma 560 is a widely used general-purpose six degrees of freedom 
+        manipulator.
+      The IBM 7575 is a scara-type robot manipulator with four degrees which are 
+        popular in automated chip manufacturing.
+      The hardware architecture of the automation work cell is shown in
+        Figure \ref{FIG:RobotArch}.
+      %%%%%%%%%%%%%%%%%%%%%%%%%%%%% FIG %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+      \begin{figure*}[t!]
+      %\centerline{\psfig{figure=figures/Integrate.eps,height=5.5in}}
+      \centerline{\includegraphics[scale=0.65]{figures/RobotArch}}
+      \caption{The hardware architecture of the robot workcell with
+               Puma 560 and IBM 7575 robots.}
+      \label{FIG:RobotArch}
+      \end{figure*}
+      %%%%%%%%%%%%%%%%%%%%%%%%%% END FIG %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+      The robot workcell is distributively controlled using two Delta Tau
+        Data System's Turbo PMAC2 PCI controllers.
+      One controller handles the Puma 560 robot manipulator while the other
+        controller handles the IBM 7575 robot manipulator and conveyor system.
+      The PMAC2 cards are housed in a standard PCI capable computer.
+      Control of the robotic manipulators is accomplished through the use
+        of the Ch Robot object oriented package \cite{ielrobots_webpage}.
+      
+    %%% }}}
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    \subsection{Supported Virtual Robot Hardware Abstractions}
+    %%% {{{
+      Currently only supports the use of the Player/Stage/Gazebo robot device
+        interface and simulator systems 
+        \cite{Collett2005,Gerkey2001b,PlayerStage_Website}.
+      The Player/Stage/Gazebo system is a client/server, three-tier middleware for 
+        robot system control and simulation \cite{Collett2005,Gerkey2001b}.
+      The system consists of three separate parts: player, stage and gazebo.
+      Player is a network server that provides a clean and simple interface
+        to robot sensors and actuators.
+      Client applications connect to a Player server over TCP sockets allowing it
+        to read data from sensors and write commands to the actuators.
+      Player currently supports a variety of robotic hardware and is one of the 
+        most successful mobile robotics re-use projects to date, arguably the 
+        de-facto standard \cite{Makarenko2006}.
+      Stage is a 2D multiple-robot simulator that provides a virtual environment
+        for populating multiple mobile robots with sensor data feedback.
+      Gazebo is the 3D counterpart of Stage.
+      Both Stage and Gazebo provide C libraries allow users to create applications
+        that can directly interface the simulation environments.
+      They also provide plug-ins for Player allowing a Player server to connect
+        to either of the simulation environment.
+      Client applications written for Player can be used to control a virtual
+        robot in either Stage or Gazebo and then transferred to a physical robot.
+
+      %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+      \subsubsection{Player/Stage/Gazebo Interface}
+      %%% {{{
+        To allow Mobile-C agents access to the Player server interface, a module
+          was created using the provided Player C libraries for direct access to 
+          a Player server.
+        The module allows Mobile-C agents to utilize all of the functionality
+          provided in the Player C library.
+        Implementation of the modules follows that as described in section 
+          \ref{sec:chsdk}.
+      %%% }}}
+      %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    %%% }}}
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+  %%% }}}
+  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+  \section{High-Level Packages} \label{sec:packages}
+  %%% {{{
+    The high-level packages are implemented by taking advantage of 
+      the fact that Mobile-C uses Ch as it agent execution agent.
+    Ch packages can be created based on C binary libraries, as discussed in 
+      Section \ref{sec:chsdk}, and used by Mobile-C agents.
+    The artificial neural network, genetic algorithm and computer vision 
+      packages were created from available open source C libraries available 
+      from the Web.
+    The use of distributed computing is a innate characteristic provided by the
+      foundation of Mobile-C.
+
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    \subsubsection{Artificial Neural Network}
+    %%% {{{
+      The artificial neural network package is based on the Fast Artificial 
+        Neural Network C library \cite{FANN}.
+      The fast artificial neural network library implements multilayer
+        artificial neural networks with support for both fully connected and 
+        sparsely connected networks.
+      The Ch FANN package \cite{chfann} provides Mobile-C agents the ability to 
+        utilize all of the functionality provided in the FANN C library
+    %%% }}}
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    \subsubsection{Genetic Algorithm}
+    %%% {{{
+      The genetic algorithm package is based on the Genetic Algorithm Utility 
+        Library (GAUL) library.
+      GAUL is a C based open source programming library designed to assist in 
+        the development of code that requires evolutionary algorithms 
+        \cite{GAULWebSite}.
+      The Ch GAUL package \cite{chgaul_website} provides Mobile-C agents
+        the ability to utilize all of the functionality provided 
+        in the GAUL C library
+    %%% }}}
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    \subsubsection{Computer Vision}
+    %%% {{{
+      In order to facilitate the acquisition of video or image data from 
+        on-board vision sensors, multiple computer vision packages are provided 
+        that utilizes the open computer vision library, OpenCV 
+        \cite{OpenCVWebSite}, to provide sophisticated vision algorithms and the 
+        image manipulation library, ImageMagick \cite{imagemagick_webpage}, to 
+        provide simple image manipulation and processing functionality.
+     OpenCV contains an optimized collection of C libraries spanning a wide 
+       range of computer vision algorithms.
+     These algorithms include motion segmentation and pose recognition 
+       \cite{Bradski2000}, multi-projector display system \cite{Yang2001}, 
+       object and face recognition, 3D reconstruction, etc.
+     ImageMagick is a widely used set of image manipulation utilities that 
+       provides a robust collection of tools and libraries for writing, reading, 
+       and manipulating images.
+     Use of these visual processing and manipulation libraries by
+       the agents are facilitated by the inclusion of the Ch OpenCV 
+       package \cite{ChOpenCV} and the Ch ImageMagick package 
+       \cite{ChImageMagick}.
+     The Ch OpenCV and Ch ImageMagick packages are Ch bindings to the
+       OpenCV and ImageMagick C libraries, respectively.
+     With these packages, Mobile-C agents can readily use the functions from 
+       the OpenCV and ImageMagick C libraries.
+
+    %%% }}}
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%    \subsubsection{Distributed Computing}
+    %%% {{{
+%      Once a robot has initiated and entered a cooperative agreement for
+%        distributed computing, the initiating robot can generate a task agent
+%        that contains the necessary distributed computing code for the desired
+%        computation.
+%      The robot then sends the task agent to the collaborating nodes and 
+%          executes the computation.
+    %%% }}}
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+  %%% }}}
+  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+  \section{Deployment System}\label{sec:imp_deploy}
+  %%% {{{
+
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    \begin{figure}%[!ht]
+    \centerline{
+        \includegraphics[width=5in]{figures/DeploymentSys-Interface}}
+    \caption{The deployment system interface.}
+    \label{fig:dep_interface}
+    \end{figure}
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    The deployment system has been implemented using a simple command prompt 
+      interface as shown in Figure \ref{fig:dep_interface}.
+    During start up, the deployment system loads all of the necessary system 
+      configuration files including location of the database files and
+      robot information files.
+%    These files include physical and software configuration information 
+%      pertaining to each robot that will be deployed by the system.
+    The deployment system also loads all of actions, tasks, 
+      and mission data available in the knowledge database.
+    Figure \ref{fig:dep_commands} shows all of the currently implemented
+      deployment system commands which are also listed in Table 
+      \ref{tab:dep_cmds}.
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    \begin{figure}%[!ht]
+    \centerline{
+        \includegraphics[width=5in]{figures/DeploymentSys-Commands}}
+    \caption{The commands available in the deployment system.}
+    \label{fig:dep_commands}
+    \end{figure}
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+ 
+    \begin{table}
+    \begin{center}
+    \caption{The available commands in the deployment system interface}
+    \label{tab:dep_cmds}
+    \begin{tabular}{|l|l|}
+    \hline
+      Command & Description \\
+    \hline
+      detect\_robots & Detect available robots \\
+      show\_robots   & Show available robots \\
+      list\_missions & List available missions \\
+      show\_missions & Show currently assigned missions\\
+      set\_missions  & Add robots or groups to missions\\
+      new\_groups    & Create new groups \\
+      show\_groups   & Show available groups \\
+      help           & Display help \\
+      add\_robots    & Add robots to group \\
+      list\_log      & Lists logging options for a robot or group\\
+      enable\_log    & Enable logging \\
+      show\_log      & Shows enabled logging options \\
+      go             & Deploy the system \\
+      stop\_mission  & Stop currently executing mission \\
+      quit           & Quit the deployment system\\
+    \hline
+    \end{tabular}
+    \end{center}
+    \end{table}
+
+    \textbf{detect\_robots:} 
+      This command searchers the current network for available robots. 
+      This is accomplished by using a UDP broadcast to the standard port address 
+        of Mobile-R.
+      Once a UDP broadcast has been received, the Mobile-R server will
+        respond with the type of the robot, current status, and address.
+      Mobile-R will also response with information pertaining to the
+        current version of Mobile-R in order to deal with 
+        interoperability issues due to version mismatching.
+      Figure \ref{fig:dep_detectrobots} shows an example output from running the
+        \textit{detect\_robots} command.
+      In the example output, 2 robots were found: a Khepera III robot with the IP
+        address 10.0.0.15 and a Pioneer2DX robot with the IP address of 
+        10.0.0.50.
+      The robot numbering, R0 and R1, are automatically assigned.
+      The deployment system then searches the available configuration files for
+        the matching robots and loads the available behaviors and possible
+        robot actions from the knowledge base.
+      %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+      \begin{figure}%[!ht]
+      \centerline{
+          \includegraphics[width=5in]{figures/DeploymentSys-Cmd-DetectRobots}}
+      \caption{An example output of the \textit{detect\_robots} and 
+               \textit{show\_robots} commands.}
+      \label{fig:dep_detectrobots}
+      \end{figure}
+      %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+    \textbf{show\_robots:} 
+      This command lists all available robots that have been registered with the
+        deployment system and is illustrated in Figure \ref{fig:dep_detectrobots}.
+
+    \textbf{list\_missions:}
+      This command lists all of the available missions that was found in the 
+        knowledge base.
+      Figure \ref{fig:dep_listmissions} shows an examples listing of available
+         missions which include environment mapping, perimeter patrolling, 
+         area surveying, and building construction.
+      Each mission is internally assigned a number such as M0 or M1.
+      %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+      \begin{figure}%[!ht]
+      \centerline{
+          \includegraphics[width=5in]{figures/DeploymentSys-Cmd-ListMissions}}
+      \caption{An example output of the \textit{list\_missions} command.}
+      \label{fig:dep_listmissions}
+      \end{figure}
+      %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+    \textbf{show\_missions:}
+      This command shows all of currently assigned missions as demonstrated
+        in Figure \ref{fig:dep_listmissions}.
+
+    \textbf{set\_missions:}
+      This command allows users to add either robots or groups to a desired
+        mission as illustrated in Figure \ref{fig:dep_listmissions}.
+      Multiple missions can be assigned during a single deployment.
+ 
+    \textbf{new\_groups:}
+      This command allows users to create new groups for robots.
+      The groups become place holders in which robots can be added to them 
+        later.
+      Figure \ref{fig:dep_newgroup} demonstrates the use of the 
+        \textit{new\_groups} command by creating two new groups, G0 and G1.
+      %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+      \begin{figure}%[!ht]
+      \centerline{
+          \includegraphics[width=5in]{figures/DeploymentSys-Cmd-NewGroup}}
+      \caption{An example output of the \textit{new\_groups} command.}
+      \label{fig:dep_newgroup}
+      \end{figure}
+      %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+    \textbf{help:}
+      These commands display the available commands list shown in Figure
+        \ref{fig:dep_interface}.
+      The available commands are also listed in Table \ref{tab:dep_cmds}.
+
+    \textbf{add\_robots:}
+      This commands assigns robots to desired groups.
+      Figure \ref{fig:dep_addrobots} illustrates the assignment of robots R0
+        and R1 to group G0 and robot R2 to group G1.
+      %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+      \begin{figure}%[!ht]
+      \centerline{
+          \includegraphics[width=5in]{figures/DeploymentSys-Cmd-AddRobots}}
+      \caption{An example output of the \textit{add\_robots} command.}
+      \label{fig:dep_addrobots}
+      \end{figure}
+      %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+      %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+      \begin{figure}%[!ht]
+      \centerline{
+          \includegraphics[width=5in]{figures/DeploymentSys-Cmd-Logging}}
+      \caption{An example output of the logging command.}
+      \label{fig:dep_logging}
+      \end{figure}
+      %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+    \textbf{list\_log:}
+      This command lists all available logging options for a robot or a group.
+      Figure \ref{fig:dep_logging} shows a listing of the available logging
+        options for robot R1.
+
+    \textbf{enable\_log:}
+      This command enables the logging of robot execution information either 
+        to the logger module in the Deployment System or directly to the robot
+        hardware.
+      Figure \ref{fig:dep_logging} demonstrates the enabling of certain logging
+        options for robot R0 and R1.
+      Robot R0 is set to log the sensor data and communications while robot R1
+        is set to log all possible information.
+      By default, the logging system will log the information directly to the
+        robot hardware.
+      The logging information can be sent back to the deployment system by
+        using the ``@HOME'' option as shown in Figure \ref{fig:dep_logging-b}.
+
+      %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+      \begin{figure}%[!ht]
+      \centerline{
+          \includegraphics[width=5in]{figures/DeploymentSys-Cmd-Logging-b}}
+      \caption{An example of setting the logging system to send data back to the
+               deployment system.}
+      \label{fig:dep_logging-b}
+      \end{figure}
+      %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+    \textbf{show\_log:}
+      This command shows all enabled logging options as illustrated in Figure
+        \ref{fig:dep_logging} where the current log setup shows robot R0 with
+        L1 and L2 options enabled, and R1 with the L0 option enabled.
+
+    \textbf{go:}
+      This command is used to initiate the deployment of the Mobile-R
+        mobile agents as demonstrated in Figure \ref{fig:dep_go}.
+      Once the deployment process has been initiated, the system first plans
+        out the allocation of tasks to each robot.
+      Then, the system composes the necessary mobile agents.
+      Afterward, the deployment system's mobile agency is started and the logger
+        agent is loaded if necessary.
+      Finally, the Mobile-R mobile agents are sent to their respective
+        robots and the deployment system drops into logger mode.
+      Logger mode is only enabled if any logging options were set and told to
+        be displayed on the deployment system.
+      %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+      \begin{figure}%[!ht]
+      \centerline{
+          \includegraphics[width=5in]{figures/DeploymentSys-Cmd-Go}}
+      \caption{An output example of using the \textit{go} command.}
+      \label{fig:dep_go}
+      \end{figure}
+      %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+    \textbf{stop\_mission:}
+      This command is used to stop a currently executing mission.
+      This command will only work with groups and robots who are still within
+        communications range.
+
+    \textbf{quit:}
+      These commands are used to shutdown and quit the deployment system.
+ 
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%    \subsection{Mobile Agent Composition}
+    %%% {{{
+    %%% }}}
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%    \subsection{Dynamic Robot Architectural Composition}
+    %{{{
+%      As stated previously, a deployment system will generate the required
+%        mobile agents and send them to their respectable robots.
+%      The generation of the mobile agents are based on a schema
+%
+%      \subsection{Dynamic Task Composition}
+%
+%      \subsection{Dynamic Behavior Composition}
+    %%% }}}
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+  %%% }}}
+  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -1,0 +1,88 @@
+\documentclass[12pt,twoside,letterpaper]{article}
+\usepackage{setspace}
+\usepackage{fancyhdr}
+
+% the following commands control the margins:
+\topmargin=-.5in    % Make letterhead start about 1 inch from top of page 
+\textheight=9.0in    % text height can be bigger for a longer letter
+\oddsidemargin=0.5in % leftmargin is 1 inch
+\evensidemargin=0.5in % leftmargin is 1 inch
+\textwidth=6.0in   % textwidth of 6.5in leaves 1 inch for right margin
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{document}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% PageStyle {{{
+  \setcounter{page}{1}
+  \pagestyle{fancy}
+  \fancyhf{} 
+  \renewcommand{\headrulewidth}{0.0pt}
+  \fancyhead[RE]{\textbf{-\thepage}-}
+% }}}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+{\raggedleft
+  Stephen Sodokan Nestinger \\
+  September 2009 \\
+  Mechanical and Aeronautical Engineering\\
+}
+\hspace{.5in}
+
+\begin{center}
+  A Reconfigurable Cooperative Control System\\
+  for Rapid Deployment of Multi-Robot Systems\\
+\end{center}
+
+\hspace{.5in}
+
+\centerline{\underline{\textbf{Abstract}}}
+
+\doublespacing
+Multi-robot systems have been used in a vast array of fields and are 
+  of particular interest in perilous environments.
+Utilizing multiple smaller and cheaper robots have many advantages compared to 
+  a highly specialized single robot.
+Multi-robot systems are fault-tolerant by nature and provide task execution 
+  parallelism for faster mission completion.
+One of the main issues in multi-robot systems is the lack of a common set of 
+  programming and control abstractions and middleware.
+Controlling and programming cooperative multi-robot systems is a highly 
+  complicated task that requires a flexible and agile control architecture 
+  and programming environment that are able to handle the distributed nature of 
+  multi-robot systems.
+This dissertation studies many different aspects of multi-robot systems.
+The major characteristics, different paradigms and programmability of
+  multi-robot systems are presented.
+The key aspects of cooperative multi-robot systems are discussed along with 
+  the different methods in which cooperation is implemented.
+The use of mobile agents to provide multi-robot system reconfigurability, 
+  reprogrammability, and rapid deployment is introduced.
+Several multi-robot system middleware are discussed along with specialized
+  middleware for cooperative systems.
+
+\doublespacing
+A highly flexible and reconfigurable cooperative robot control platform called
+  Mobile-R has been developed in the course of this research.
+Mobile-R consists of two modules: the Robot Control System (RCS) and 
+  Deployment System (DS).
+Mobile-R is a highly extensible platform that follows the multi-agent 
+  paradigm.
+It allows for the implementation of architectures popularly used in the 
+  different multi-robot paradigms and is based on widely accepted standards
+  for multi-agent interaction allowing for interoperability with other 
+  multi-agent systems. 
+Mobile-R is built upon Mobile-C, an IEEE  Foundation for Intelligent 
+  Physical Agents standards compliant mobile agent system. 
+The innate mobility characteristic of mobile agents provides an invariant 
+  execution of control code over disparate hosts and overall system fault 
+  tolerance.
+The system has been validated through multiple experiments presented in the
+  dissertation.
+The simulated application of Mobile-R to tier-scalable planetary reconnaissance 
+  demonstrates the feasibility and applicability of the system to various 
+  multi-robot scenarios.
+
+\end{document}
