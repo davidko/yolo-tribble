@@ -31,7 +31,7 @@ appendix.dvi: appendix.tex preamble.tex
 	latex appendix.tex
 
 view:
-	evince Ko_PHDthesis.pdf
+	evince Ko_PHDThesis.pdf
 #	xpdf thesis.pdf
 #xpdf Ko_PHDThesis.pdf
 

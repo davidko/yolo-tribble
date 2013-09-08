@@ -1,0 +1,292 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="744.09448819"
+   height="1052.3622047"
+   id="svg12460"
+   version="1.1"
+   inkscape:version="0.48.4 r9939"
+   sodipodi:docname="New document 52">
+  <defs
+     id="defs12462">
+    <marker
+       inkscape:stockid="Arrow1Lend"
+       orient="auto"
+       refY="0.0"
+       refX="0.0"
+       id="Arrow1Lend"
+       style="overflow:visible;">
+      <path
+         id="path3905"
+         d="M 0.0,0.0 L 5.0,-5.0 L -12.5,0.0 L 5.0,5.0 L 0.0,0.0 z "
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1.0pt;"
+         transform="scale(0.8) rotate(180) translate(12.5,0)" />
+    </marker>
+    <marker
+       inkscape:stockid="Arrow1Lstart"
+       orient="auto"
+       refY="0.0"
+       refX="0.0"
+       id="Arrow1Lstart"
+       style="overflow:visible">
+      <path
+         id="path3902"
+         d="M 0.0,0.0 L 5.0,-5.0 L -12.5,0.0 L 5.0,5.0 L 0.0,0.0 z "
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1.0pt"
+         transform="scale(0.8) translate(12.5,0)" />
+    </marker>
+  </defs>
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="1.979899"
+     inkscape:cx="334.85787"
+     inkscape:cy="653.31903"
+     inkscape:document-units="px"
+     inkscape:current-layer="layer1"
+     showgrid="false"
+     inkscape:window-width="1317"
+     inkscape:window-height="744"
+     inkscape:window-x="49"
+     inkscape:window-y="24"
+     inkscape:window-maximized="1">
+    <inkscape:grid
+       type="xygrid"
+       id="grid13050" />
+  </sodipodi:namedview>
+  <metadata
+     id="metadata12465">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1">
+    <rect
+       style="fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       id="rect12994"
+       width="145.71428"
+       height="74.273415"
+       x="221.42857"
+       y="328.79074"
+       ry="0" />
+    <text
+       xml:space="preserve"
+       style="font-size:12px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Courier New;-inkscape-font-specification:Courier New"
+       x="230.71428"
+       y="340.21933"
+       id="text12468"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         id="tspan12470"
+         x="230.71428"
+         y="340.21933">Fourier Series</tspan><tspan
+         id="tspan13002"
+         sodipodi:role="line"
+         x="230.71428"
+         y="355.21933">Function Generator</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:12px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Courier New;-inkscape-font-specification:Courier New"
+       x="102.14285"
+       y="328.07648"
+       id="text12474"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         id="tspan12476"
+         x="102.14285"
+         y="328.07648">Clock Signal</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:12px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Courier New;-inkscape-font-specification:Courier New"
+       x="101.42857"
+       y="376.64789"
+       id="text12478"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         id="tspan12480"
+         x="101.42857"
+         y="376.64789">Sync Signal</tspan></text>
+    <g
+       id="g13022"
+       transform="translate(1.4285714,12.144517)">
+      <rect
+         y="321.64789"
+         x="395.71429"
+         height="25"
+         width="115"
+         id="rect13020"
+         style="fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none" />
+      <text
+         sodipodi:linespacing="125%"
+         id="text13016"
+         y="337.72797"
+         x="402.65668"
+         style="font-size:12px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Courier New;-inkscape-font-specification:Courier New"
+         xml:space="preserve"><tspan
+           y="337.72797"
+           x="402.65668"
+           id="tspan13018"
+           sodipodi:role="line">PID Controller</tspan></text>
+    </g>
+    <g
+       id="g13038">
+      <path
+         inkscape:connector-curvature="0"
+         id="path13033"
+         d="m 580.70535,308.43303 c -20.90792,0 -37.84375,16.93583 -37.84375,37.84375 0,20.90792 16.93583,37.875 37.84375,37.875 13.72082,0 25.73534,-7.29133 32.375,-18.21875 l 30.5,0 0,-38.5625 -30.0625,0 c -6.54373,-11.32305 -18.79438,-18.9375 -32.8125,-18.9375 z"
+         style="fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none" />
+      <text
+         sodipodi:linespacing="125%"
+         id="text13027"
+         y="342.49554"
+         x="559.28571"
+         style="font-size:12px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Courier New;-inkscape-font-specification:Courier New"
+         xml:space="preserve"><tspan
+           y="342.49554"
+           x="559.28571"
+           id="tspan13029"
+           sodipodi:role="line">Electric</tspan><tspan
+           id="tspan13031"
+           y="357.49554"
+           x="559.28571"
+           sodipodi:role="line">Motor</tspan></text>
+    </g>
+    <path
+       style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="m 665,317.36218 0,20 5,5 -10,5 10,5 -10,5 5,5 0,20"
+       id="path13052"
+       inkscape:connector-curvature="0" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-start:url(#Arrow1Lstart);marker-end:url(#Arrow1Lend)"
+       d="m 675,352.36218 20,0 0,60 -240,0 0,-50"
+       id="path13054"
+       inkscape:connector-curvature="0" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="m 660,382.36218 10,0"
+       id="path13426"
+       inkscape:connector-curvature="0" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="m 662.58929,385.04078 4.82142,0"
+       id="path13428"
+       inkscape:connector-curvature="0" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="m 663.75,387.71932 2.5,0"
+       id="path13430"
+       inkscape:connector-curvature="0" />
+    <text
+       xml:space="preserve"
+       style="font-size:12px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Courier New;-inkscape-font-specification:Courier New"
+       x="654.46429"
+       y="315.21933"
+       id="text13432"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         id="tspan13434"
+         x="654.46429"
+         y="315.21933">VCC</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:12px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Courier New;-inkscape-font-specification:Courier New"
+       x="600.03064"
+       y="425.05746"
+       id="text13436"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         id="tspan13438"
+         x="600.03064"
+         y="425.05746">Output Shaft </tspan><tspan
+         sodipodi:role="line"
+         x="600.03064"
+         y="440.05746"
+         id="tspan13440">Poteniometer </tspan><tspan
+         sodipodi:role="line"
+         x="600.03064"
+         y="455.05746"
+         id="tspan13442">Signal</tspan></text>
+    <path
+       style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-start:none;marker-end:url(#Arrow1Lend)"
+       d="m 189.90868,325.05235 25.75889,8.5863"
+       id="path13444"
+       inkscape:connector-curvature="0" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-end:url(#Arrow1Lend)"
+       d="m 181.82746,372.02444 33.33503,-15.15229"
+       id="path13998"
+       inkscape:connector-curvature="0" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-end:url(#Arrow1Lend)"
+       d="m 371.23106,346.26555 20.70813,1.01016"
+       id="path14184"
+       inkscape:connector-curvature="0" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-end:url(#Arrow1Lend)"
+       d="m 516.69303,343.74017 20.20305,0"
+       id="path14370"
+       inkscape:connector-curvature="0" />
+    <text
+       xml:space="preserve"
+       style="font-size:12px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Courier New;-inkscape-font-specification:Courier New"
+       x="515.1778"
+       y="321.01172"
+       id="text14556"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         id="tspan14558"
+         x="515.1778"
+         y="321.01172">PWM</tspan><tspan
+         sodipodi:role="line"
+         x="515.1778"
+         y="336.01172"
+         id="tspan14560">Out</tspan></text>
+    <g
+       id="g14570"
+       transform="translate(-37.88072,-79.296975)">
+      <rect
+         y="442.23004"
+         x="270.72089"
+         height="31.31473"
+         width="94.449265"
+         id="rect14568"
+         style="fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none" />
+      <text
+         sodipodi:linespacing="125%"
+         id="text14562"
+         y="453.9675"
+         x="275.0051"
+         style="font-size:12px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Courier New;-inkscape-font-specification:Courier New"
+         xml:space="preserve"><tspan
+           y="453.9675"
+           x="275.0051"
+           id="tspan14564"
+           sodipodi:role="line">Stored</tspan><tspan
+           id="tspan14566"
+           y="468.9675"
+           x="275.0051"
+           sodipodi:role="line">Coefficients</tspan></text>
+    </g>
+  </g>
+</svg>

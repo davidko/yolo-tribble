@@ -1,0 +1,56 @@
+\chapter{The Persistent Distributed Agent-Based Genetic Algorithm}
+  The Persistent Distributed Agent-Based Genetic Algorithm (PDABGA) 
+    is an island-type distributed genetic algorithm (GA). 
+  The general goal for the new algorithm are to optimize extremely
+    complex problems utilizing a distributed network of computing hosts
+    over an indefinite period of time.
+  These goals are accomplished by utilizing mobile-agent technology in the 
+    design of the algorithm.
+
+  The population of the of the GA is composed of autonomous mobile agents.
+  Each agent in the agent population is responsible for its own fitness
+    calculation, mate selection, and reproduction.
+  PDABGA is
+    comprised of a handful of individual components, including a Mobile-C
+    agency, various Mobile-C agents, a simulation framework, and a
+    newscast network binding the distributed agencies together, as summarized
+    in Figure \ref{fig:pdabga_architecture}.
+  The following sections will disseminate each of the components in detail.
+
+  \section{Mobile-C: A C/C++ Mobile Agent Framework}
+    Mobile-C was first conceived and prototyped as a standalone application which
+      processed agents written in C embedded in XML \cite{chen2005}. 
+    During the course of this research, it has evolved to become an embeddable,
+      fast, and stable agent platform. 
+    Mobile-C has already been used in several robotic systems, such as robotic
+      workcells \cite{Nestinge2010b}. 
+    In the robotic workcells, the agents take advantage of agent
+      synchronization methods provided by Mobile-C to perform a coordinated task.
+    Mobile-C has also been used on mobile robots performing distributed vision
+      sensor fusion \cite{Nestinge2010}. 
+    By utilizing mobile agents, image processing is done in situ on the robots,
+      thereby saving network bandwidth and energy.
+
+  \section{Agency Design}
+    \subsection{Initialization}
+      The Agency performs a variety of steps upon startup.
+
+
+  \section{Mobile Agent Design}
+    \subsection{The GA Agent}
+    Each GA Agent within the PDABGA is analagous to a living entity in the real world.
+    The agents carry genetic material, can travel to new locations, look for
+      mates, have children, and susceptible to death depending on their fitness.
+    The agents are implemented as a state machine capable of carrying multiple
+      conversations simultaneously with other agents and agencies. 
+    The state machine is summarized in Figure \ref{fig:gaAgentStateMachine}.
+    Note that the state machine is implemented on a per-conversation basis, such that
+      multiple conversations can be maintained by a single agent simultaneously. 
+
+    \subsection{The Master Coordinator Agent}
+
+    \subsection{The Cull Agent}
+
+    \subsection{The Newscast Agent}
+
+

@@ -1,6 +1,11 @@
-%\documentclass[12pt,draft]{ucthesis}
-\documentclass[12pt,final]{style/ucthesis}
-\input{tex/Preamble}
+%\documentclass[12pt,draft]{style/ucthesis}
+\documentclass[11pt]{style/ucthesis}
+\usepackage{comment}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{subfigure}
+\def\dsp{\def\baselinestretch{2.0}\large\normalsize}
+\dsp
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Titles
@@ -31,7 +36,7 @@
 %}
 \prevdegrees{B.S. (University of California, Davis) 2006 \\
              M.S. (University of California, Davis) 2010}
-\field{Mechanical and Aeronautical Engineering}
+\field{Mechanical and Aerospace Engineering}
 \campus{DAVIS}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -56,19 +61,10 @@ Abstract
 \include{tex/Intro}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\include{tex/Coop}
+\include{tex/PDABGA}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\include{tex/Arch}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\include{tex/Impl}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\include{tex/Val}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\include{tex/Apps}
+\include{tex/gait_optimization}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \include{tex/Conclusion}
@@ -77,7 +73,7 @@ Abstract
 %\nocite{*}
 %\bibliographystyle{plain}
 \bibliographystyle{unsrt}
-\bibliography{ielpaper,references}
+\bibliography{quals}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Appendix

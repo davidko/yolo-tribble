@@ -6,8 +6,6 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % begin introduction
 
-
-
 \chapter{Introduction} %{{{
   \section{Motivation} %{{{
     This dissertation presents a novel distributed optimization algorithm designed
@@ -21,17 +19,30 @@
     As demonstrated by the Mars rovers, robotic systems have also been proven
       to be viable solutions toward space exploration.
     As the range of exploration extends farther out into the Solar System, 
-      communications and direct remote control of robotic systems will become
-      infeasible.
+      communications and direct remote control of robotic systems will likely
+      become infeasible.
     In order to fulfil exploration missions, robots will need more autonomy and
       will have to adapt to their environment, be it through self-reconfiguration,
       gait generation, multi-robot cooperation, or other creative methods.
 
     The PDABGA presented here is intended to be a tool to help a team of robots
-      complete a complex task by pooling their computational resources. 
-    It is especially useful if the solution space is large and it is difficult
-      or impossible to analyze the task with analytical methods, but a
-      simulation of the task can be implemented.
+      figure out how to complete a complex task by pooling their computational
+      resources. 
+    The PDABGA is distributed, decentralized, persistent, and extremely fault
+      tolerant so that it may run effectively on systems such as networked teams
+      of robots. 
+    These attributes allow the PDABGA to tackle very large optimization problems
+      over long periods of time while efficiently utilizing all available CPU
+      resources.
+    Specifically, tasks such as gait generation and optimization for mobile
+      modular robots of arbitrary morphology is a problem currently impossible
+      to solve using analytical methods due to the non-linear and nonholonomic
+      nature of non-rolling robotic gaits. 
+    Therefore, such a problem presents a perfect scenario for usage of the PDABGA.
+
+    %It is especially useful if the solution space is large and it is difficult
+    %  or impossible to analyze the task with analytical methods, but a
+    %  simulation of the task can be implemented.
   %}}}
 
   \section{A Review of Genetic Algorithms} %{{{
@@ -246,7 +257,7 @@
 
     Mobile Agents are essentially autonomous computer programs which may
     migrate mid-execution to other hosts. 
-    Figure \ref{fig:internet_agencies} shows a mobile agent visiting a number
+    Figur \ref{fig:internet_agencies} shows a mobile agent visiting a number
       of geographically separated hosts in a sequential manner. 
     Various mobile agent platforms have been developed over the years in
     various languages and computing environments. 
@@ -271,19 +282,7 @@
 
   %}}} section
 
-  \section{Approach} %{{{
-    While the PDABGA algorithm itself is applicable in a wide variety of 
-      applications, this dissertation focuses on the usage of the algorithm to 
-      generate and optimize gaits for arbitrarily shaped modular robots. 
-    - robots cheaper
-    - more computation
-    - hard problems require optimizations which may run indefinitely
-    - use agents for persistence, distributed computing (decentralized, etc)
-    %}}} section
-
-  \section{Modular Robots}
-
-  \section{Mobile Agents}
+  \section{A Review of Modular Robots}
 
     Modular robotics is a class of robotics where robots are composed of smaller
       robotic units, each with their own actuation and sensors. 
@@ -319,6 +318,107 @@
     Mobots are easily configurable to many different configurations as shown in
       Figure \ref{fig:mobot_modules}, and are commercially available
       fully-built and ready to use.
+
+    % FIGURE --------------------------------------------------
+    \begin{figure}[!ht]
+    \begin{center}
+    \subfigure[A single Mobot module.] {
+       \includegraphics[width=2in]{figures/inchworm2}
+    }
+    \subfigure[Two attached Mobot modules.] {
+       \includegraphics[width=2in]{figures/lift2}
+    }
+    \end{center}
+    \caption{\label{fig:mobot_modules}Mobot modules.}
+    \end{figure}
+    % END FIG -------------------------------------------------
+
+  \section{Robotic Gait Generation and Optimization}
+    A common research topic among many modular robotic systems is the
+      generation of robotic gaits. 
+    Traditionally, robotic gaits were designed by humans and implemented as
+      gait tables \cite{Yim2000, Kamimura2001}. 
+    Hands-on methods of generating gait tables have also been investigates,
+      such as ``pose teaching'' \cite{Ryland2010}. 
+    Pose teaching for modular robots is analogous to ``lead-by-the-nose''
+      teaching for robotic arms where the user physically manipulates the robot
+      through a series of desired poses or motions.  
+    However, gait tables require central control, and are not especially fault
+      tolerant. 
+    Furthermore, as modular robotic systems get large, the increasing degrees
+      of freedom of the robot make pose-teaching unmanageable. 
+    Research was eventually steered towards distributed control laws, such as
+      phase automata \cite{Zhang2003}, and neural networks and similar control
+      methodologies \cite{Canavier1997, Inagaki2006, Derosa2008}. 
+    Using these strategies, unique gait patterns have been developed which do
+      not require a central controller \cite{Sastra2009}.
+
+    Much research has also been directed towards the automated generation of
+      gaits rather than relying on human design. 
+    In cases where an automated robotic system is incommunicado, it is
+    infeasible to rely on human interaction when controlling robots. 
+    When modular robotic systems get large, designing a gait for dozens or even
+      hundreds of modules becomes a daunting task.
+    Furthermore, there is no indication that the human-designed gaits are
+      optimal in any way. 
+    For robotic systems where the geometry of the robot is well known, there
+      exist analytical methods for gait generation \cite{Weingarten2004}.
+    However, as soon as robot morphologies become arbitrary and complex,
+      analytical methods become hard. 
+    Calculating the inverse kinematics for a complex compound mobile robot can
+      be hard or impossible. 
+    Thus, rather than pursuing analytical methods, current research on gait
+      generation for complex robots has levied the power of computer simulations
+      and evolutionary algorithms to generate gaits. 
+    It has been shown that even gross simplifications of a robot in a simulated
+      environment may still be useful towards generating useful controllers and
+      gaits \cite{Jakobi1995, Jakobi1998, Bongard2004, Lipson2006,
+      Zagal2007}. 
+    It has been shown that using a combination of simulated environments and
+      testing on physical robots can produce effective real-world gaits
+      \cite{Zagal2007, Koos2010}. 
+
+
+  \section{Approach} %{{{
+    The basic strategy behind the design of the PDABGA is to imbue mobile 
+      agents with the core principles of evolutionary algorithms; survival 
+      of the fittest, genetic crossover, and mutation. 
+    Agents and agency networks themselves tend to be highly distributed, 
+      decentralized, and very fault tolerant. 
+    The agents are executed on multiple agencies distributed across a 
+      decentralized network and perform their own fitness calculations, mate
+      selection, crossover, and breeding. 
+    Helper agents running on each agent manage population sizes and other
+      tasks.   
+    The agents and agencies are implemented using Mobile-C, an agency
+      supporting C/C++ agents which has been revamped and heavily upgraded during
+      the course of this research.
+
+    While the PDABGA is applicable in a wide range of areas,
+      this dissertation will use the algorithm towards generating and
+      optimizing a robotic gait for a modular robotic system.
+    As robots computation becomes cheaper and cheaper, modular robots
+      consisting of hundreds or even thousands of modules will become 
+      more and more commonplace.
+    These modular robotic systems represent a highly suitable use case scenario
+      for the PDABGA. 
+    Modular robotic systems are dynamically complicated which can exclude the
+      possibility of designing and optimizing gaits analytically. 
+    They have many distributed computational resources with each module acting
+      as a computational load.
+    However, Modular robotic systems also tend to be highly faulty, where
+      individual nodes may fail catastrophically and without warning.
+
+    \begin{comment}
+    While the PDABGA algorithm itself is applicable in a wide variety of 
+      applications, this dissertation focuses on the usage of the algorithm to 
+      generate and optimize gaits for arbitrarily shaped modular robots. 
+    - robots cheaper
+    - more computation
+    - hard problems require optimizations which may run indefinitely
+    - use agents for persistence, distributed computing (decentralized, etc)
+    \end{comment}
+    %}}} section
 
 
 % end introduction }}}
