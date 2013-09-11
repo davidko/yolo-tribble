@@ -14,7 +14,10 @@
    id="svg12460"
    version="1.1"
    inkscape:version="0.48.4 r9939"
-   sodipodi:docname="New document 52">
+   sodipodi:docname="motor_controller_architecture.svg"
+   inkscape:export-filename="/home/dko/Documents/dissertation/figures/motor_controller_architecture.png"
+   inkscape:export-xdpi="300"
+   inkscape:export-ydpi="300">
   <defs
      id="defs12462">
     <marker
@@ -51,9 +54,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="1.979899"
-     inkscape:cx="334.85787"
-     inkscape:cy="653.31903"
+     inkscape:zoom="0.98994949"
+     inkscape:cx="375.26397"
+     inkscape:cy="760.7897"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -85,8 +88,8 @@
     <rect
        style="fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
        id="rect12994"
-       width="145.71428"
-       height="74.273415"
+       width="144.70412"
+       height="115.68967"
        x="221.42857"
        y="328.79074"
        ry="0" />
@@ -105,17 +108,6 @@
          sodipodi:role="line"
          x="230.71428"
          y="355.21933">Function Generator</tspan></text>
-    <text
-       xml:space="preserve"
-       style="font-size:12px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Courier New;-inkscape-font-specification:Courier New"
-       x="102.14285"
-       y="328.07648"
-       id="text12474"
-       sodipodi:linespacing="125%"><tspan
-         sodipodi:role="line"
-         id="tspan12476"
-         x="102.14285"
-         y="328.07648">Clock Signal</tspan></text>
     <text
        xml:space="preserve"
        style="font-size:12px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Courier New;-inkscape-font-specification:Courier New"
@@ -229,9 +221,10 @@
          id="tspan13442">Signal</tspan></text>
     <path
        style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-start:none;marker-end:url(#Arrow1Lend)"
-       d="m 189.90868,325.05235 25.75889,8.5863"
+       d="m 294.96454,283.6361 1.51523,39.90102"
        id="path13444"
-       inkscape:connector-curvature="0" />
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="cc" />
     <path
        style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-end:url(#Arrow1Lend)"
        d="m 181.82746,372.02444 33.33503,-15.15229"
@@ -263,11 +256,11 @@
          y="336.01172"
          id="tspan14560">Out</tspan></text>
     <g
-       id="g14570"
-       transform="translate(-37.88072,-79.296975)">
+       id="g14688"
+       transform="translate(0.37880592,0)">
       <rect
-         y="442.23004"
-         x="270.72089"
+         y="362.93307"
+         x="232.84016"
          height="31.31473"
          width="94.449265"
          id="rect14568"
@@ -275,18 +268,93 @@
       <text
          sodipodi:linespacing="125%"
          id="text14562"
-         y="453.9675"
-         x="275.0051"
+         y="374.67053"
+         x="237.12437"
          style="font-size:12px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Courier New;-inkscape-font-specification:Courier New"
          xml:space="preserve"><tspan
-           y="453.9675"
-           x="275.0051"
+           y="374.67053"
+           x="237.12437"
            id="tspan14564"
            sodipodi:role="line">Stored</tspan><tspan
            id="tspan14566"
-           y="468.9675"
-           x="275.0051"
+           y="389.67053"
+           x="237.12437"
            sodipodi:role="line">Coefficients</tspan></text>
+    </g>
+    <g
+       id="g14646"
+       transform="translate(1.0101525,5.0507627)">
+      <rect
+         y="199.79344"
+         x="218.19295"
+         height="74.751289"
+         width="157.5838"
+         id="rect14644"
+         style="fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none" />
+      <text
+         sodipodi:linespacing="125%"
+         id="text14634"
+         y="217.21498"
+         x="228.86082"
+         style="font-size:12px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Courier New;-inkscape-font-specification:Courier New"
+         xml:space="preserve"><tspan
+           y="217.21498"
+           x="228.86082"
+           id="tspan14636"
+           sodipodi:role="line">Clock: t<tspan
+   style="font-size:65%;baseline-shift:sub"
+   id="tspan14658">c</tspan></tspan><tspan
+           id="tspan14638"
+           y="232.21498"
+           x="228.86082"
+           sodipodi:role="line">Counts milliseconds</tspan><tspan
+           id="tspan14640"
+           y="247.21498"
+           x="228.86082"
+           sodipodi:role="line">since robot</tspan><tspan
+           id="tspan14642"
+           y="262.21497"
+           x="228.86082"
+           sodipodi:role="line">startup.</tspan></text>
+    </g>
+    <text
+       xml:space="preserve"
+       style="font-size:12px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Courier New;-inkscape-font-specification:Courier New"
+       x="327.28943"
+       y="460.41278"
+       id="text14654"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         id="tspan14656"
+         x="327.28943"
+         y="460.41278" /></text>
+    <g
+       id="g14694"
+       transform="translate(-20.581857,-173.74624)">
+      <rect
+         y="576.07526"
+         x="253.80083"
+         height="31.31473"
+         width="94.449265"
+         id="rect14568-2"
+         style="fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none" />
+      <text
+         sodipodi:linespacing="125%"
+         id="text14660"
+         y="587.81268"
+         x="261.41022"
+         style="font-size:12px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Courier New;-inkscape-font-specification:Courier New"
+         xml:space="preserve"><tspan
+           y="587.81268"
+           x="261.41022"
+           id="tspan14662"
+           sodipodi:role="line">Stored Sync</tspan><tspan
+           id="tspan14664"
+           y="602.81268"
+           x="261.41022"
+           sodipodi:role="line">Time, t<tspan
+   style="font-size:65%;baseline-shift:sub"
+   id="tspan14700">s</tspan></tspan></text>
     </g>
   </g>
 </svg>
