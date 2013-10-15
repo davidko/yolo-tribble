@@ -38,20 +38,89 @@
       modular robots of arbitrary morphology is a problem currently impossible
       to solve using analytical methods due to the non-linear and nonholonomic
       nature of non-rolling robotic gaits. 
-    Therefore, such a problem presents a perfect scenario for usage of the PDABGA.
+    Furthermore, each module member of the modular robot can act as a 
+      computational node, which allows the group of modules to act as a 
+      distributed computing cluster. 
+    Therefore, such a problem presents a perfect scenario for usage of the PDABGA,
+      which is designed to optimize problems using a heuristic method on a
+      distributed computing platform.
 
     %It is especially useful if the solution space is large and it is difficult
     %  or impossible to analyze the task with analytical methods, but a
     %  simulation of the task can be implemented.
   %}}}
 
+  \section{A Review of Mobile-Agent Systems} %{{{
+    % FIGURE --------------------------------------------------
+    \begin{figure}[!ht]
+    \begin{center}
+       \includegraphics[width=3in]{figures/internet_agencies}
+    \end{center}
+    \caption{\label{fig:internet_agencies}A mobile agent visiting hosts
+    on the Internet.}
+    \end{figure}
+    % END FIG -------------------------------------------------
+
+    Mobile Agents are essentially autonomous computer programs which may
+    migrate mid-execution to other hosts. 
+    Figure \ref{fig:internet_agencies} shows a mobile agent visiting a number
+      of geographically separated hosts in a sequential manner. 
+    Agents can carry code and datastate with them and migrate between hosts.
+    Because they are mobile, they can migrate to remote hosts and perform
+      data processing locally on the remote host, thereby saving network
+      bandwidth and energy.
+    They can also migrate to remote hosts based on host resources which
+      makes the usage of agents an easy way to implement decentralized
+      load balancing.
+
+    Various mobile agent platforms have been developed over the years in
+    various languages and computing environments. 
+    They have been successfully used in a variety of engineering applications
+    such as manufacturing \cite{DiStefano2008, Nestinger2010}, computer vision
+    \cite{Nestinger2010b}, distributed sensor networks \cite{Fok2005, Wu2001},
+      and structural health monitoring \cite{Taylor2009}. Some popular agent
+      systems include Mole \cite{Baumann2002}, Java Aglets \cite{Lange1998},
+      Ara \cite{Peine2002}, Tacoma \cite{Johnansen2002}, Concordia
+      \cite{Wong1997}, D’Agents \cite{Gray2002}, JADE \cite{Bellifemine2008},
+      PEERWARE \cite{Cugola2001}, MARS \cite{Cabri2000}, and
+      Mobile-C \cite{Chen2006, Chou2010, mobilec}. 
+    Among these mobile agent platforms, JADE perhaps enjoys the most general
+      usage. 
+    However, JADE is implemented in JAVA and is not directly capable of
+      accessing low level function calls when running on embedded systems. 
+    Of these agent platforms, Mobile-C is the only platform capable of running
+    C/C++ agents which are directly capable of calling low level system calls
+      for purposes of robotic control \cite{Nestinger2010}, and has been
+      successfully tested on the iMobot \cite{Ryland2010, Ko2010}, a modular
+      robot.
+
+  %}}} section
+
   \section{A Review of Genetic Algorithms} %{{{
-    Genetic algorithms were first conceptualized in the 1960’s by John Holland as a
+    The Genetic algorithm (GA) was first conceptualized in the 1960’s by John Holland as a
       method of optimizing complex problems \cite{Goldberg1988}. 
     Genetic algorithms search for an optimal solution to a problem by
       investigating a pool of candidate solutions and spawning more candidate
       solutions through biologically inspired processes of selection,
       chromosome crossover, and mutation. 
+    In the genetic algorithm, candidate solutions are represented as a 
+      chromosome, where each chromosome is represented as a series of
+      genes.
+    Each gene is composed of binary data which may represent an integer, 
+      floating point number, or other value.
+    During initialization, the genetic algorithm forms a population of 
+      candidate solutions using randomized genes. 
+    Then, the GA runs a fitness function on each chromosome to find the fitness
+      of each individual. 
+    Once all of the individuals in the population have been assigned a fitness, 
+      they are sorted and the lowest performing individuals are discarded.
+    To repopulate the population of candidate solutions, the GA takes
+      pairs of better-performing individuals and ``mates'' them, creating
+      children whose chromosomes are a mix of the two parents' chromosomes.
+    During repopulation, there is a chance of mutation, where a gene of
+      a child chromosome takes on a random value. 
+    The process is continued until termination conditions are met.
+
     Many variants of the original genetic algorithm have now been investigated
       such as genetic programming \cite{Koza1994, Banzhaf2000}, a method of using
       similar natural selection techniques to generate computer code rather than
@@ -244,45 +313,7 @@
   %}}} subsection
   %}}} section
 
-  \section{A Review of Mobile-Agent Systems} %{{{
-    % FIGURE --------------------------------------------------
-    \begin{figure}[!ht]
-    \begin{center}
-       \includegraphics[width=3in]{figures/internet_agencies}
-    \end{center}
-    \caption{\label{fig:internet_agencies}A mobile agent visiting hosts
-    on the Internet.}
-    \end{figure}
-    % END FIG -------------------------------------------------
-
-    Mobile Agents are essentially autonomous computer programs which may
-    migrate mid-execution to other hosts. 
-    Figur \ref{fig:internet_agencies} shows a mobile agent visiting a number
-      of geographically separated hosts in a sequential manner. 
-    Various mobile agent platforms have been developed over the years in
-    various languages and computing environments. 
-    They have been successfully used in a variety of engineering applications
-    such as manufacturing \cite{DiStefano2008, Nestinger2010}, computer vision
-    \cite{Nestinger2010b}, distributed sensor networks \cite{Fok2005, Wu2001},
-      and structural health monitoring \cite{Taylor2009}. Some popular agent
-      systems include Mole \cite{Baumann2002}, Java Aglets \cite{Lange1998},
-      Ara \cite{Peine2002}, Tacoma \cite{Johnansen2002}, Concordia
-      \cite{Wong1997}, D’Agents \cite{Gray2002}, JADE \cite{Bellifemine2008},
-      PEERWARE \cite{Cugola2001}, MARS \cite{Cabri2000}, and
-      Mobile-C \cite{Chen2006, Chou2010, mobilec}. 
-    Among these mobile agent platforms, JADE perhaps enjoys the most general
-      usage. 
-    However, JADE is implemented in JAVA and is not directly capable of
-      accessing low level function calls when running on embedded systems. 
-    Of these agent platforms, Mobile-C is the only platform capable of running
-    C/C++ agents which are directly capable of calling low level system calls
-      for purposes of robotic control \cite{Nestinger2010}, and has been
-      successfully tested on the iMobot \cite{Ryland2010, Ko2010}, a modular
-      robot.
-
-  %}}} section
-
-  \section{A Review of Modular Robots}
+  \section{A Review of Modular Robots} %{{{
 
     Modular robotics is a class of robotics where robots are composed of smaller
       robotic units, each with their own actuation and sensors. 
@@ -332,8 +363,9 @@
     \caption{\label{fig:mobot_modules}Mobot modules.}
     \end{figure}
     % END FIG -------------------------------------------------
+  %}}} section
 
-  \section{Robotic Gait Generation and Optimization}
+  \section{Robotic Gait Generation and Optimization} %{{{
     A common research topic among many modular robotic systems is the
       generation of robotic gaits. 
     Traditionally, robotic gaits were designed by humans and implemented as
@@ -377,6 +409,7 @@
     It has been shown that using a combination of simulated environments and
       testing on physical robots can produce effective real-world gaits
       \cite{Zagal2007, Koos2010}. 
+  %}}} section
 
 
   \section{Approach} %{{{
